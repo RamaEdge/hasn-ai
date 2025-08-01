@@ -87,8 +87,8 @@ Our live demonstration achieved:
 
 ## 📚 Documentation
 
-- **[Complete Overview](REVOLUTIONARY_BRAIN_AI_SUMMARY.md)** - Full technical and conceptual description
-- **[Research Foundation](BRAIN_INSPIRED_RESEARCH.md)** - Neuroscience background and methodology
+- **[Complete Overview](analysis/REVOLUTIONARY_BRAIN_AI_SUMMARY.md)** - Full technical and conceptual description
+- **[Research Foundation](research/BRAIN_INSPIRED_RESEARCH.md)** - Neuroscience background and methodology
 - **[Technical Analysis](output/brain_network_analysis_report.md)** - Detailed performance analysis
 
 ## 🔬 Technical Highlights

@@ -49,6 +49,13 @@ except ImportError:
                 return {"status": "cognitive", "working_memory": 7}
 
 from api.routes import brain, health, training
+try:
+    from api.routes import automated_training
+    AUTOMATED_TRAINING_AVAILABLE = True
+except ImportError:
+    AUTOMATED_TRAINING_AVAILABLE = False
+    print("⚠️  Automated training routes not available")
+
 from api.middleware.rate_limit import RateLimitMiddleware
 from api.models.responses import APIResponse, ErrorResponse
 
@@ -129,6 +136,10 @@ app.include_router(health.router, prefix="/health", tags=["Health"])
 app.include_router(brain.router, prefix="/brain", tags=["Brain Processing"])
 app.include_router(training.router, prefix="/training", tags=["Training"])
 
+# Include automated training router if available
+if AUTOMATED_TRAINING_AVAILABLE:
+    app.include_router(automated_training.router, prefix="/automated-training", tags=["Automated Training"])
+
 # Root endpoint
 @app.get("/", response_model=APIResponse)
 async def root():
@@ -141,9 +152,10 @@ async def root():
             "description": "Production API for HASN architecture",
             "endpoints": {
                 "health": "/health",
-                "docs": "/docs",
+                "docs": "/docs", 
                 "brain_processing": "/brain",
-                "training": "/training"
+                "training": "/training",
+                "automated_training": "/automated-training" if AUTOMATED_TRAINING_AVAILABLE else "not_available"
             },
             "timestamp": datetime.now().isoformat()
         }
