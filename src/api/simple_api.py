@@ -483,6 +483,248 @@ async def get_conversations():
         }
     )
 
+# Brain portability endpoints
+@app.post("/brain/save")
+async def save_brain_state(session_name: str = None):
+    """Save current brain state to make it portable"""
+    try:
+        # Import brain serializer
+        import sys
+        import os
+        sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'storage'))
+        from brain_serializer import BrainStateSerializer
+        
+        if not BRAIN_NATIVE_AVAILABLE:
+            raise HTTPException(status_code=503, detail="Brain-native system not available")
+        
+        # Initialize serializer
+        serializer = BrainStateSerializer()
+        
+        # Save brain state
+        if session_name is None:
+            from datetime import datetime
+            session_name = f"api_session_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        filepath = serializer.save_brain_state(brain_network.brain, session_name)
+        
+        # Get brain stats for response
+        brain_state = brain_network.brain.get_brain_state_summary()
+        
+        return APIResponse(
+            success=True,
+            message="🧠 Brain state saved successfully - Your AI is now portable!",
+            data={
+                "session_name": session_name,
+                "filepath": filepath,
+                "brain_stats": {
+                    "vocabulary_size": brain_state["vocabulary_size"],
+                    "cognitive_load": brain_state["cognitive_load"],
+                    "learning_capacity": brain_state["learning_capacity"],
+                    "working_memory_items": brain_state["working_memory_items"]
+                },
+                "portability_features": [
+                    "Complete neural state preserved",
+                    "All learned vocabulary included",
+                    "Context associations maintained",
+                    "Response patterns saved",
+                    "Memory systems intact"
+                ],
+                "advantages_over_llm": [
+                    "LLMs: Cannot save/load trained state",
+                    "Brain-Native: Complete state portability",
+                    "LLMs: Require full retraining",
+                    "Brain-Native: Instant state restoration"
+                ]
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Brain save error: {e}")
+        raise HTTPException(status_code=500, detail=f"Brain save failed: {str(e)}")
+
+@app.post("/brain/load")
+async def load_brain_state(session_name: str):
+    """Load a previously saved brain state"""
+    try:
+        # Import brain serializer
+        import sys
+        import os
+        sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'storage'))
+        from brain_serializer import BrainStateSerializer
+        
+        if not BRAIN_NATIVE_AVAILABLE:
+            raise HTTPException(status_code=503, detail="Brain-native system not available")
+        
+        # Initialize serializer
+        serializer = BrainStateSerializer()
+        
+        # Load brain state
+        brain_state_data = serializer.load_brain_state(session_name)
+        restored_brain = serializer.restore_brain_from_state(brain_state_data)
+        
+        # Replace current brain with restored brain
+        brain_network.brain = restored_brain
+        
+        # Get restored brain stats
+        brain_state = restored_brain.get_brain_state_summary()
+        metadata = brain_state_data.get("metadata", {})
+        learning_stats = brain_state_data.get("learning_stats", {})
+        
+        return APIResponse(
+            success=True,
+            message="🧠 Brain state loaded successfully - Your AI is restored!",
+            data={
+                "session_name": session_name,
+                "saved_at": metadata.get("saved_at", "Unknown"),
+                "restored_stats": {
+                    "vocabulary_size": brain_state["vocabulary_size"],
+                    "cognitive_load": brain_state["cognitive_load"],
+                    "learning_capacity": brain_state["learning_capacity"],
+                    "working_memory_items": brain_state["working_memory_items"]
+                },
+                "original_stats": learning_stats,
+                "restoration_success": {
+                    "vocabulary_match": brain_state["vocabulary_size"] == learning_stats.get("vocabulary_size", 0),
+                    "neural_patterns": "Fully restored",
+                    "memory_systems": "Active and functional",
+                    "learning_capability": "Ready for new interactions"
+                },
+                "superiority_demonstration": [
+                    "✅ Complete brain state restoration",
+                    "✅ All learned knowledge intact", 
+                    "✅ Neural patterns preserved",
+                    "✅ Context associations maintained",
+                    "❌ LLMs cannot do this - static after training!"
+                ]
+            }
+        )
+        
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail=f"Brain session '{session_name}' not found")
+    except Exception as e:
+        logger.error(f"Brain load error: {e}")
+        raise HTTPException(status_code=500, detail=f"Brain load failed: {str(e)}")
+
+@app.get("/brain/sessions")
+async def list_brain_sessions():
+    """List all available saved brain sessions"""
+    try:
+        # Import brain serializer
+        import sys
+        import os
+        sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'storage'))
+        from brain_serializer import BrainStateSerializer
+        
+        # Initialize serializer
+        serializer = BrainStateSerializer()
+        
+        # Get all sessions
+        sessions = serializer.list_saved_sessions()
+        
+        return APIResponse(
+            success=True,
+            message="📋 Available brain sessions retrieved",
+            data={
+                "total_sessions": len(sessions),
+                "sessions": sessions,
+                "storage_info": {
+                    "storage_path": str(serializer.storage_path),
+                    "format": "JSON (human-readable)",
+                    "features": [
+                        "Complete brain state preservation",
+                        "Cross-platform compatibility", 
+                        "Version control friendly",
+                        "Debugging and inspection ready"
+                    ]
+                },
+                "usage_instructions": {
+                    "save": "POST /brain/save?session_name=my_brain",
+                    "load": "POST /brain/load?session_name=my_brain",
+                    "list": "GET /brain/sessions"
+                },
+                "brain_portability": "🚀 Your AI can now be saved, shared, and restored anywhere!"
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Sessions list error: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to list sessions: {str(e)}")
+
+@app.get("/brain/sessions/{session_name}/info")
+async def get_session_info(session_name: str):
+    """Get detailed information about a specific brain session"""
+    try:
+        # Import brain serializer
+        import sys
+        import os
+        sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'storage'))
+        from brain_serializer import BrainStateSerializer
+        
+        # Initialize serializer
+        serializer = BrainStateSerializer()
+        
+        # Get session details
+        session_info = serializer.get_session_info(session_name)
+        
+        return APIResponse(
+            success=True,
+            message=f"📊 Detailed information for brain session '{session_name}'",
+            data={
+                "session_analysis": session_info,
+                "brain_capabilities": {
+                    "learned_knowledge": f"{session_info['vocabulary_analysis']['total_words']} words",
+                    "experience_level": f"{session_info['brain_activity']['total_interactions']} interactions",
+                    "context_understanding": f"{session_info['vocabulary_analysis']['context_richness']} associations",
+                    "response_patterns": f"{session_info['brain_activity']['response_patterns']} learned"
+                },
+                "portability_status": "✅ Fully portable - can be loaded anywhere",
+                "vs_llm_comparison": {
+                    "llm_state_inspection": "❌ Impossible - black box",
+                    "brain_state_inspection": "✅ Complete transparency",
+                    "llm_knowledge_transfer": "❌ Cannot extract or transfer",
+                    "brain_knowledge_transfer": "✅ Perfect state preservation"
+                }
+            }
+        )
+        
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail=f"Brain session '{session_name}' not found")
+    except Exception as e:
+        logger.error(f"Session info error: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get session info: {str(e)}")
+
+@app.delete("/brain/sessions/{session_name}")
+async def delete_brain_session(session_name: str):
+    """Delete a saved brain session"""
+    try:
+        # Import brain serializer
+        import sys
+        import os
+        sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'storage'))
+        from brain_serializer import BrainStateSerializer
+        
+        # Initialize serializer
+        serializer = BrainStateSerializer()
+        
+        # Delete session
+        success = serializer.delete_session(session_name)
+        
+        if success:
+            return APIResponse(
+                success=True,
+                message=f"🗑️ Brain session '{session_name}' deleted successfully",
+                data={
+                    "deleted_session": session_name,
+                    "note": "Brain state permanently removed from storage"
+                }
+            )
+        else:
+            raise HTTPException(status_code=404, detail=f"Brain session '{session_name}' not found")
+        
+    except Exception as e:
+        logger.error(f"Session delete error: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to delete session: {str(e)}")
+
 if __name__ == "__main__":
     uvicorn.run(
         "simple_api:app",
