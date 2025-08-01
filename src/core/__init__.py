@@ -7,3 +7,6 @@ Core implementations of the brain-inspired neural network architectures:
 
 from .brain_inspired_network import *
 from .advanced_brain_network import *
+
+# Optimized implementations (Week 1 Critical Improvements)
+from .optimized_brain_network import *
