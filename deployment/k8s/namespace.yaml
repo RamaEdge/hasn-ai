@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hasn-ai
+  labels:
+    app: hasn-ai
+    environment: production

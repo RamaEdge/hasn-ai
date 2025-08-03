@@ -11,7 +11,7 @@
 1. **Clone the repository:**
 ```bash
 git clone <repository-url>
-cd cde-hack-session
+cd hasn-ai
 ```
 
 2. **Set up virtual environment:**
@@ -27,15 +27,14 @@ source .venv/bin/activate  # On macOS/Linux
 
 3. **Install dependencies:**
 ```bash
-pip install numpy networkx
-# Optional: pip install matplotlib (for visualizations)
+pip install -r requirements.txt
 ```
 
 ## 🎯 Running the Demonstrations
 
 ### 1. Simple Brain Demo (Recommended Start)
 ```bash
-python src/simple_brain_demo.py
+python src/demos/simple_brain_demo.py
 ```
 **What it shows:**
 - ⚡ Spiking neural dynamics
@@ -45,7 +44,7 @@ python src/simple_brain_demo.py
 
 ### 2. Advanced Brain Network
 ```bash
-python src/advanced_brain_network.py
+python src/demos/working_advanced_brain.py
 ```
 **What it shows:**
 - 🔬 Cognitive capabilities
@@ -55,7 +54,7 @@ python src/advanced_brain_network.py
 
 ### 3. Comprehensive Analysis
 ```bash
-python src/demo_and_analysis.py
+python src/demos/demo_and_analysis.py
 ```
 **What it shows:**
 - 📈 Performance comparisons

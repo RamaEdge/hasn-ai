@@ -19,6 +19,7 @@ Core system architecture and technical solutions
 Project analysis, comparisons, and summaries
 - [`BRAIN_VS_LLM_ANALYSIS.md`](./analysis/BRAIN_VS_LLM_ANALYSIS.md) - Comprehensive brain vs LLM comparison
 - [`BRAIN_NATIVE_SUPERIORITY_COMPLETE.md`](./analysis/BRAIN_NATIVE_SUPERIORITY_COMPLETE.md) - Brain-native advantages analysis
+- [`BRAIN_INSPIRED_NETWORKS_COMPARISON.md`](./analysis/BRAIN_INSPIRED_NETWORKS_COMPARISON.md) - Comprehensive comparison with other brain-inspired platforms
 - [`FINAL_PROJECT_SUMMARY.md`](./analysis/FINAL_PROJECT_SUMMARY.md) - Complete project summary
 - [`REVOLUTIONARY_BRAIN_AI_SUMMARY.md`](./analysis/REVOLUTIONARY_BRAIN_AI_SUMMARY.md) - Revolutionary capabilities summary
 
@@ -26,6 +27,8 @@ Project analysis, comparisons, and summaries
 Production deployment and integration
 - [`PRODUCTION_ROADMAP.md`](./deployment/PRODUCTION_ROADMAP.md) - Complete production roadmap
 - [`INTEGRATION_COMPLETE.md`](./deployment/INTEGRATION_COMPLETE.md) - Integration completion status
+- [`../deployment/docker/`](../deployment/docker/) - Docker containerization files
+- [`../deployment/k8s/`](../deployment/k8s/) - Kubernetes deployment manifests
 
 ### **🎯 [Training](./training/)**
 Training systems and methodologies
