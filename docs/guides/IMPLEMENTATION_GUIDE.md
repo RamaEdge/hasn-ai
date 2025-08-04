@@ -43,8 +43,8 @@ mypy>=0.910" > requirements.txt
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from src.core.brain_inspired_network import BrainNetwork
-from src.core.advanced_brain_network import AdvancedBrainNetwork
+from src.core.simplified_brain_network import SimpleBrainNetwork
+from src.core.simplified_brain_network import SimpleBrainNetwork
 
 app = FastAPI(
     title="Brain-Inspired Neural Network API",

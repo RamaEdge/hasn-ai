@@ -191,11 +191,11 @@ def demo_brain_comparison():
     print("=" * 30)
     
     try:
-        from core.advanced_brain_network import AdvancedCognitiveBrain
+        from core.simplified_brain_network import SimpleBrainNetwork
         
         # Create two brains - before and after learning
         print("Creating baseline brain...")
-        baseline_brain = AdvancedCognitiveBrain()
+        baseline_brain = SimpleBrainNetwork(num_neurons=100, connectivity_prob=0.1)
         
         # Simulate some processing
         test_pattern = {
@@ -228,7 +228,7 @@ async def main():
     required_files = [
         "src/training/automated_internet_trainer.py",
         "src/training/training_config.json",
-        "src/core/brain_inspired_network.py"
+        "src/core/simplified_brain_network.py"
     ]
     
     missing_files = []

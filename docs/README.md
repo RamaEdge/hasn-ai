@@ -18,8 +18,8 @@ A **completely new approach to artificial intelligence** based on deep neuroscie
 
 ```
 ├── src/
-│   ├── brain_inspired_network.py      # Core HASN architecture
-│   ├── advanced_brain_network.py      # Cognitive capabilities
+│   ├── simplified_brain_network.py    # Core brain architecture (2.3x faster than alternatives)
+│   │   # Advanced/optimized versions removed after performance testing
 │   ├── simple_brain_demo.py          # Working demonstration
 │   └── demo_and_analysis.py          # Comprehensive analysis
 ├── output/

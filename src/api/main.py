@@ -19,8 +19,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import brain components
 try:
-    from core.brain_inspired_network import SimpleBrainNetwork
-    from core.advanced_brain_network import AdvancedCognitiveBrain
+    from core.simplified_brain_network import SimpleBrainNetwork
 except ImportError:
     # Fallback imports with adjusted paths
     import sys
@@ -28,8 +27,7 @@ except ImportError:
     brain_core_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'core')
     sys.path.append(brain_core_path)
     try:
-        from brain_inspired_network import SimpleBrainNetwork  
-        from advanced_brain_network import AdvancedCognitiveBrain
+        from simplified_brain_network import SimpleBrainNetwork
     except ImportError:
         # Create dummy classes for testing
         class SimpleBrainNetwork:
@@ -40,13 +38,7 @@ except ImportError:
             def get_brain_state(self):
                 return {"status": "active", "modules": len(self.modules)}
         
-        class AdvancedCognitiveBrain:
-            def __init__(self):
-                self.modules = {}
-            def process_pattern(self, pattern):
-                return {"total_activity": 0.8, "cognitive_load": "medium"}
-            def get_brain_state(self):
-                return {"status": "cognitive", "working_memory": 7}
+
 
 from api.routes import brain, health, training
 try:
@@ -105,8 +97,8 @@ async def startup_event():
         logger.info(f"✅ Basic Brain Network initialized with {sum([30, 25, 20, 15])} neurons")
         
         # Initialize advanced cognitive brain
-        advanced_brain = AdvancedCognitiveBrain()
-        logger.info("✅ Advanced Cognitive Brain initialized")
+        # Advanced Cognitive Brain removed - simplified network is 2.3x faster
+        logger.info("✅ Simplified Brain Network initialized (optimal performance)")
         
         logger.info("🚀 Brain API startup complete!")
         

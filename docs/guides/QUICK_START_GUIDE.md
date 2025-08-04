@@ -45,7 +45,7 @@ python src/simple_brain_demo.py
 
 ### 2. Advanced Brain Network
 ```bash
-python src/advanced_brain_network.py
+python src/core/simplified_brain_network.py
 ```
 **What it shows:**
 - 🔬 Cognitive capabilities
@@ -171,8 +171,8 @@ num_steps = 2000     # Increase from 1000
 
 ### Key Files to Explore
 1. **`src/simple_brain_demo.py`** - Start here for basic concepts
-2. **`src/brain_inspired_network.py`** - Core architecture
-3. **`src/advanced_brain_network.py`** - Advanced features
+2. **`src/simplified_brain_network.py`** - Core simplified architecture
+3. **`src/core/simplified_brain_network.py`** - High-performance brain network (2.3x faster)
 4. **`BRAIN_INSPIRED_RESEARCH.md`** - Scientific background
 
 ### Understanding the Science

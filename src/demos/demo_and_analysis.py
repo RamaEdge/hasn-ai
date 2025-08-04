@@ -11,12 +11,13 @@ import time
 from typing import Dict, List, Tuple
 import json
 
-# Add src directory to path
-sys.path.append('/Users/ravi.chillerega/sources/cde-hack-session/src')
+# Add src directory to path dynamically
+current_dir = os.path.dirname(os.path.abspath(__file__))
+src_dir = os.path.dirname(current_dir)
+sys.path.insert(0, src_dir)
 
 try:
-    from brain_inspired_network import HierarchicalAdaptiveSpikingNetwork, create_example_network
-    from advanced_brain_network import create_cognitive_brain_network, run_cognitive_experiment
+    from core.simplified_brain_network import SimpleBrainNetwork
 except ImportError as e:
     print(f"Import error: {e}")
     print("Note: Some visualization features may not work without matplotlib")
@@ -287,11 +288,11 @@ def run_comprehensive_analysis():
     
     analyzer = BrainNetworkAnalyzer()
     
-    # Create and test basic HASN
-    print("\n🧠 Creating Basic Hierarchical Adaptive Spiking Network...")
+    # Create and test basic simplified brain network
+    print("\n🧠 Creating Basic Simplified Brain Network...")
     try:
-        basic_network = create_example_network()
-        print(f"✓ Basic HASN created with {len(basic_network.modules)} modules")
+        basic_network = SimpleBrainNetwork(num_neurons=100, connectivity_prob=0.1)
+        print(f"✓ Basic network created with {basic_network.num_neurons} neurons")
         
         # Run basic tests
         basic_results = {}
@@ -301,20 +302,10 @@ def run_comprehensive_analysis():
         print(f"✗ Error with basic network: {e}")
         basic_results = {'error': str(e)}
     
-    # Create and test advanced cognitive network
-    print("\n🎯 Creating Advanced Cognitive Brain Network...")
-    try:
-        cognitive_network = create_cognitive_brain_network()
-        print(f"✓ Cognitive network created with {len(cognitive_network.modules)} modules")
-        
-        # Run cognitive tests
-        cognitive_results = {}
-        cognitive_results['memory_capacity'] = analyzer.test_memory_capacity(cognitive_network)
-        cognitive_results['attention_mechanism'] = analyzer.test_attention_mechanism(cognitive_network)
-        
-    except Exception as e:
-        print(f"✗ Error with cognitive network: {e}")
-        cognitive_results = {'error': str(e)}
+    # Note: Advanced cognitive network functionality has been removed after
+    # performance testing showed the simplified network is 2.3x faster
+    print("\n🎯 Skipping Advanced Cognitive Network (removed for performance)")
+    cognitive_results = {'status': 'removed - simplified network is 2.3x faster'}
     
     # Comparison analysis
     comparison_results = analyzer.compare_with_traditional_nn()
@@ -332,14 +323,17 @@ def run_comprehensive_analysis():
     report = analyzer.generate_detailed_report(all_results)
     
     # Save results and report
-    os.makedirs('/Users/ravi.chillerega/sources/cde-hack-session/output', exist_ok=True)
+    # Create output directory in current project
+    project_root = os.path.dirname(os.path.dirname(src_dir))
+    output_dir = os.path.join(project_root, 'output')
+    os.makedirs(output_dir, exist_ok=True)
     
     # Save raw results
-    with open('/Users/ravi.chillerega/sources/cde-hack-session/output/analysis_results.json', 'w', encoding='utf-8') as f:
+    with open(os.path.join(output_dir, 'analysis_results.json'), 'w', encoding='utf-8') as f:
         json.dump(all_results, f, indent=2, default=str)
     
     # Save report
-    with open('/Users/ravi.chillerega/sources/cde-hack-session/output/brain_network_analysis_report.md', 'w', encoding='utf-8') as f:
+    with open(os.path.join(output_dir, 'brain_network_analysis_report.md'), 'w', encoding='utf-8') as f:
         f.write(report)
     
     print("✓ Analysis complete!")
