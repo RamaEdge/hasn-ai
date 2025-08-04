@@ -11,7 +11,7 @@ import os
 import sys
 import signal
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 # Add path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -31,6 +31,16 @@ class TrainingCLI:
         self.trainer: Optional[AutomatedInternetTrainer] = None
         self.training_task: Optional[asyncio.Task] = None
         self.monitor = TrainingMonitor()
+    
+    def get_available_profiles(self) -> List[str]:
+        """Get list of available training profiles"""
+        config_file = os.path.join(os.path.dirname(__file__), 'training_config.json')
+        try:
+            with open(config_file, 'r') as f:
+                config_data = json.load(f)
+            return list(config_data['training_profiles'].keys())
+        except Exception:
+            return ['development', 'production', 'research']  # fallback
         
     def load_config(self, profile: str = "development") -> TrainingConfig:
         """Load training configuration from file"""
@@ -48,14 +58,19 @@ class TrainingCLI:
             # Create TrainingConfig object
             config = TrainingConfig(
                 max_articles_per_session=profile_config['max_articles_per_session'],
+                max_article_length=profile_config['max_article_length'],
                 collection_interval=profile_config['collection_interval'],
-                min_article_quality_score=profile_config['min_article_quality_score'],
+                sources=profile_config['sources'],
+                training_batch_size=profile_config['training_batch_size'],
                 learning_rate=profile_config['learning_rate'],
-                save_interval=profile_config['save_interval'],
+                pattern_consolidation_threshold=profile_config['pattern_consolidation_threshold'],
+                max_memory_patterns=profile_config['max_memory_patterns'],
+                min_article_quality_score=profile_config['min_article_quality_score'],
+                language_filter=profile_config['language_filter'],
+                content_filters=profile_config['content_filters'],
                 max_concurrent_requests=profile_config['max_concurrent_requests'],
                 request_delay=profile_config['request_delay'],
-                sources=profile_config['sources'],
-                content_filters=profile_config['content_filters']
+                save_interval=profile_config['save_interval']
             )
             
             print(f"✅ Loaded '{profile}' configuration profile")
@@ -235,6 +250,10 @@ class TrainingCLI:
 
 async def main():
     """Main CLI function"""
+    # Create CLI instance to get available profiles
+    cli = TrainingCLI()
+    available_profiles = cli.get_available_profiles()
+    
     parser = argparse.ArgumentParser(
         description='HASN Automated Internet Training CLI',
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -257,7 +276,7 @@ Examples:
     # Start command
     start_parser = subparsers.add_parser('start', help='Start automated training')
     start_parser.add_argument('--profile', default='development', 
-                             choices=['development', 'production', 'research'],
+                             choices=available_profiles,
                              help='Training profile to use')
     start_parser.add_argument('--continuous', action='store_true',
                              help='Run continuously until stopped')
@@ -292,8 +311,6 @@ Examples:
     if not args.command:
         parser.print_help()
         return
-    
-    cli = TrainingCLI()
     
     try:
         if args.command == 'start':

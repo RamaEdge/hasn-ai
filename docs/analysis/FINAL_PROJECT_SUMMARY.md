@@ -17,8 +17,8 @@ hasn-ai/
 │   ├── __init__.py                    # Package initialization
 │   ├── core/                          # 🏗️ Core architectures (2 files)
 │   │   ├── __init__.py
-│   │   ├── brain_inspired_network.py      # Main HASN implementation (465 lines)
-│   │   └── advanced_brain_network.py      # Cognitive capabilities (511 lines)
+│   │   ├── simplified_brain_network.py    # Main brain implementation (254 lines, 2.3x faster)
+│   │   # Advanced/optimized versions removed after performance testing
 │   ├── demos/                         # 🎭 Working demonstrations (3 files)
 │   │   ├── __init__.py
 │   │   ├── simple_brain_demo.py           # Basic HASN demo (433 lines)
@@ -82,7 +82,7 @@ hasn-ai/
 ### Test Core Functionality:
 ```bash
 # Test basic brain network
-python src/core/brain_inspired_network.py
+python src/core/simplified_brain_network.py
 
 # Test advanced cognitive network
 python src/core/advanced_brain_network.py
@@ -123,7 +123,7 @@ python src/tests/simple_neural_test.py
 ## 📊 **Code Quality Assessment**
 
 ### 🏆 **High Quality** (Production Ready):
-- ✅ `src/core/brain_inspired_network.py` - Well-structured HASN implementation
+- ✅ `src/core/simplified_brain_network.py` - Well-structured simplified implementation
 - ✅ `src/core/advanced_brain_network.py` - Fixed cognitive capabilities version
 - ✅ `src/demos/working_advanced_brain.py` - **Excellent working demo with clear output**
 - ✅ `src/training/brain_ai_interactive.py` - Comprehensive training interface

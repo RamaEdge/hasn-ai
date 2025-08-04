@@ -15,7 +15,7 @@ import os
 # Add the current directory to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from simple_brain_demo import SimpleBrainNetwork, SimpleBrainNeuron, SimpleBrainModule
+from core.simplified_brain_network import SimpleBrainNetwork
 
 
 class InteractiveBrainTrainer:
@@ -25,7 +25,9 @@ class InteractiveBrainTrainer:
     """
     
     def __init__(self, module_sizes: List[int] = [50, 40, 30, 20]):
-        self.network = SimpleBrainNetwork(module_sizes)
+        # Calculate total neurons from module sizes
+        total_neurons = sum(module_sizes)
+        self.network = SimpleBrainNetwork(total_neurons)
         self.training_data = []
         self.pattern_memory = {}  # Store learned patterns
         self.concept_associations = defaultdict(list)  # Concept -> pattern mappings
