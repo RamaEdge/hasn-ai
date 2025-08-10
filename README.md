@@ -167,6 +167,18 @@ Brain State Storage ← HASN Brain Network ← Neural Pattern Converter
 - **Cognitive Modeling**: Understanding consciousness
 - **Green AI**: Sustainable computing solutions
 
+## Contributing
+
+See [CONTRIBUTION.md](CONTRIBUTION.md) for guidelines on development, linting/formatting, security scans, and submitting pull requests.
+
+## Security
+
+Please review our [Security policy](Security.md) for how to report vulnerabilities and recommended scanning steps.
+
+## License
+
+This project is licensed under the terms described in [LICENSE](LICENSE).
+
 ---
 
 _"Ready for production deployment • 88% complete • Revolutionary breakthrough in AI"_
