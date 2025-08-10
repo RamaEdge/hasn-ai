@@ -3,16 +3,15 @@ FastAPI Brain-Inspired Neural Network API
 Production-ready API for HASN architecture
 """
 
-from fastapi import FastAPI, HTTPException, Depends
+import logging
+import os
+import sys
+from datetime import datetime
+
+import uvicorn
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-import uvicorn
-import asyncio
-import logging
-from datetime import datetime
-from typing import Dict, Any, Optional
-import sys
-import os
 
 # Add src to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -21,34 +20,35 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import brain components
 try:
-    from core.simplified_brain_network import SimpleBrainNetwork
     from core.cognitive_brain_network import CognitiveBrainNetwork, CognitiveConfig
+    from core.simplified_brain_network import SimpleBrainNetwork
 except ImportError:
     # Fallback imports with adjusted paths
-    brain_core_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'core')
+    brain_core_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "core")
     sys.path.append(brain_core_path)
     try:
-        from simplified_brain_network import SimpleBrainNetwork
         from cognitive_brain_network import CognitiveBrainNetwork, CognitiveConfig
-    except ImportError as e:
+        from simplified_brain_network import SimpleBrainNetwork
+    except ImportError:
         raise
 
 from api.routes import brain, health, training
+
 try:
     from api.routes import automated_training
+
     AUTOMATED_TRAINING_AVAILABLE = True
 except ImportError:
     AUTOMATED_TRAINING_AVAILABLE = False
     print("⚠️  Automated training routes not available")
 
+from api.adapters.brain_adapters import CognitiveBrainAdapter, SimpleBrainAdapter
 from api.middleware.rate_limit import RateLimitMiddleware
 from api.models.responses import APIResponse, ErrorResponse
-from api.adapters.brain_adapters import SimpleBrainAdapter, CognitiveBrainAdapter
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
-    openapi_url="/openapi.json"
+    openapi_url="/openapi.json",
 )
 
 # CORS middleware
@@ -81,14 +81,15 @@ app.add_middleware(RateLimitMiddleware, calls=100, period=60)  # 100 calls per m
 basic_brain: SimpleBrainAdapter | None = None
 advanced_brain: CognitiveBrainAdapter | None = None
 
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize brain networks on startup"""
     global basic_brain, advanced_brain
-    
+
     try:
         logger.info("🧠 Initializing Brain Networks...")
-        
+
         # Initialize basic (simplified) brain network
         simple = SimpleBrainNetwork(num_neurons=100, connectivity_prob=0.05)
         basic_brain = SimpleBrainAdapter(simple)
@@ -96,15 +97,18 @@ async def startup_event():
 
         # Initialize advanced cognitive brain network
         cognitive_cfg = CognitiveConfig(max_episodic_memories=200)
-        cognitive = CognitiveBrainNetwork(num_neurons=150, connectivity_prob=0.05, config=cognitive_cfg)
+        cognitive = CognitiveBrainNetwork(
+            num_neurons=150, connectivity_prob=0.05, config=cognitive_cfg
+        )
         advanced_brain = CognitiveBrainAdapter(cognitive)
         logger.info("✅ CognitiveBrainNetwork initialized (150 neurons)")
-        
+
         logger.info("🚀 Brain API startup complete!")
-        
+
     except Exception as e:
         logger.error(f"❌ Failed to initialize brain networks: {e}")
         raise
+
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -112,16 +116,19 @@ async def shutdown_event():
     logger.info("🛑 Shutting down Brain API...")
     # Add cleanup logic here if needed
 
+
 # Dependency to get brain instances
 def get_brain_network():
     if basic_brain is None:
         raise HTTPException(status_code=503, detail="Brain network not initialized")
     return basic_brain
 
+
 def get_advanced_brain():
     if advanced_brain is None:
         raise HTTPException(status_code=503, detail="Advanced brain not initialized")
     return advanced_brain
+
 
 # Include routers
 app.include_router(health.router, prefix="/health", tags=["Health"])
@@ -137,7 +144,12 @@ app.include_router(training.router, prefix="/training", tags=["Training"])
 
 # Include automated training router if available
 if AUTOMATED_TRAINING_AVAILABLE:
-    app.include_router(automated_training.router, prefix="/automated-training", tags=["Automated Training"])
+    app.include_router(
+        automated_training.router,
+        prefix="/automated-training",
+        tags=["Automated Training"],
+    )
+
 
 # Root endpoint
 @app.get("/", response_model=APIResponse)
@@ -151,14 +163,17 @@ async def root():
             "description": "Production API for HASN architecture",
             "endpoints": {
                 "health": "/health",
-                "docs": "/docs", 
+                "docs": "/docs",
                 "brain_processing": "/brain",
                 "training": "/training",
-                "automated_training": "/automated-training" if AUTOMATED_TRAINING_AVAILABLE else "not_available"
+                "automated_training": (
+                    "/automated-training" if AUTOMATED_TRAINING_AVAILABLE else "not_available"
+                ),
             },
-            "timestamp": datetime.now().isoformat()
-        }
+            "timestamp": datetime.now().isoformat(),
+        },
     )
+
 
 # Global error handler
 @app.exception_handler(Exception)
@@ -170,16 +185,11 @@ async def global_exception_handler(request, exc):
         content=ErrorResponse(
             success=False,
             error="Internal server error",
-            detail=str(exc) if app.debug else "An unexpected error occurred"
-        ).dict()
+            detail=str(exc) if app.debug else "An unexpected error occurred",
+        ).dict(),
     )
+
 
 if __name__ == "__main__":
     # Development server
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
-    )
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, log_level="info")

@@ -11,5 +11,3 @@ def test_import_adapters():
     mod = importlib.import_module("api.adapters.brain_adapters")
     assert hasattr(mod, "SimpleBrainAdapter")
     assert hasattr(mod, "CognitiveBrainAdapter")
-
-

@@ -8,11 +8,11 @@ Brain adapters providing a stable interface for routers.
 from typing import Dict
 
 try:
-    from core.simplified_brain_network import SimpleBrainNetwork
     from core.cognitive_brain_network import CognitiveBrainNetwork
+    from core.simplified_brain_network import SimpleBrainNetwork
 except ImportError:  # pragma: no cover - fallback for certain execution contexts
-    from typing import Any as SimpleBrainNetwork  # type: ignore
     from typing import Any as CognitiveBrainNetwork  # type: ignore
+    from typing import Any as SimpleBrainNetwork  # type: ignore
 
 
 class SimpleBrainAdapter:
@@ -172,5 +172,3 @@ class CognitiveBrainAdapter:
 
     def get_weights(self):
         return self.network.get_weights()
-
-
