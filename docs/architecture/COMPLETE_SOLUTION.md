@@ -47,11 +47,12 @@ Full-featured training with text-to-pattern conversion and Q&A.
    - Local learning at synapses
    - Homeostatic regulation
 
-3. **💭 Cognitive Features**
+3. **💭 Cognitive Features (Built on Spiking Core)**
    - Working memory (7-item capacity like humans)
    - Attention mechanisms (selective focus)
    - Memory consolidation
    - Structural plasticity
+   - Episodic memory, associations, and inference (see Cognitive Layer)
 
 4. **🌐 Modular Design**
    - Hierarchical organization
@@ -266,6 +267,19 @@ Unlike traditional neural networks, this brain-inspired system:
 - 🎯 Adapts to **new patterns** without forgetting old ones
 
 ## 🎯 Next Steps
+
+## 🧠 Cognitive Layer (Spiking-Based Cognition)
+The cognitive layer (`CognitiveBrainNetwork`) extends the spiking core (`SimpleBrainNetwork` / `SimpleSpikingNeuron`) with:
+
+- Episodic memory storage with contextual metadata
+- Association discovery using pattern similarity, temporal proximity, and context similarity
+- Inference generation by exploring association chains with confidence scoring
+
+Run the cognitive inference demos:
+```bash
+python examples/cognitive_inference_demo.py
+```
+Scenarios include learning and inference, temporal correlations, and analogical reasoning, with printed cognitive state summaries.
 
 1. **Experiment**: Try different patterns and training approaches
 2. **Customize**: Modify architecture for your specific needs

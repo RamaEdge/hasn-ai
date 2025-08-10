@@ -35,7 +35,7 @@ pip install numpy networkx
 
 ### 1. Simple Brain Demo (Recommended Start)
 ```bash
-python src/simple_brain_demo.py
+python src/demos/simple_brain_demo.py
 ```
 **What it shows:**
 - ⚡ Spiking neural dynamics
@@ -55,7 +55,7 @@ python src/core/simplified_brain_network.py
 
 ### 3. Comprehensive Analysis
 ```bash
-python src/demo_and_analysis.py
+python src/demos/demo_and_analysis.py
 ```
 **What it shows:**
 - 📈 Performance comparisons
@@ -170,10 +170,10 @@ num_steps = 2000     # Increase from 1000
 ## 📚 Learn More
 
 ### Key Files to Explore
-1. **`src/simple_brain_demo.py`** - Start here for basic concepts
-2. **`src/simplified_brain_network.py`** - Core simplified architecture
-3. **`src/core/simplified_brain_network.py`** - High-performance brain network (2.3x faster)
-4. **`BRAIN_INSPIRED_RESEARCH.md`** - Scientific background
+1. **`src/demos/simple_brain_demo.py`** - Start here for basic concepts
+2. **`src/core/simplified_brain_network.py`** - Core simplified architecture
+3. **`src/demos/demo_and_analysis.py`** - Comparative demos and analysis
+4. **`docs/research/BRAIN_INSPIRED_RESEARCH.md`** - Scientific background
 
 ### Understanding the Science
 - **STDP**: Spike-timing dependent plasticity
