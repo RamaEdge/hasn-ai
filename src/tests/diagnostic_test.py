@@ -11,36 +11,20 @@ import matplotlib.pyplot as plt
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from core.brain_inspired_network import HierarchicalAdaptiveSpikingNetwork
 from core.simplified_brain_network import SimpleBrainNetwork
 
 
 def test_original_network():
-    """Test original network with strong input"""
-    print("Testing Original Network:")
-    
-    # Create small network
-    modules_config = [(0, 10), (1, 10)]
-    network = HierarchicalAdaptiveSpikingNetwork(modules_config)
-    
-    # Create strong input pattern
+    """Deprecated original network test removed; mirror with simplified network."""
+    print("Testing Original Network (deprecated): using SimpleBrainNetwork as baseline")
+    network = SimpleBrainNetwork(num_neurons=20, connectivity_prob=0.2)
     def strong_input(t):
-        return {0: {i: True for i in range(5)}}  # Strong constant input to first 5 neurons
-    
-    # Run short simulation
-    results = network.run_simulation(duration=100.0, external_inputs_func=strong_input)
-    
-    total_spikes = len(results['spike_history'])
-    print(f"  Total neurons: {sum(m.num_neurons for m in network.modules.values())}")
+        return {i: True for i in range(5)}
+    results = network.run_simulation(duration=100.0, input_pattern_func=strong_input)
+    total_spikes = len(results['spike_record'])
+    print(f"  Total neurons: {network.num_neurons}")
     print(f"  Total spikes: {total_spikes}")
     print(f"  Average activity: {np.mean(results['activity_history']):.4f}")
-    
-    # Check individual neuron states
-    sample_neuron = network.modules[0].neurons[0]
-    print(f"  Sample neuron voltage: {sample_neuron.v_membrane:.4f}")
-    print(f"  Sample neuron threshold: {sample_neuron.threshold:.4f}")
-    print(f"  Sample neuron connections: {len(sample_neuron.synapses)}")
-    
     return results
 
 
@@ -78,18 +62,8 @@ def analyze_connectivity():
     print("CONNECTIVITY ANALYSIS")
     print("="*50)
     
-    # Original network connectivity
-    modules_config = [(0, 5), (1, 5)]
-    orig_network = HierarchicalAdaptiveSpikingNetwork(modules_config)
-    
-    total_connections = 0
-    for module in orig_network.modules.values():
-        for neuron in module.neurons:
-            total_connections += len(neuron.synapses)
-    
-    print(f"Original network:")
-    print(f"  Total connections: {total_connections}")
-    print(f"  Connections per neuron: {total_connections / 10:.2f}")
+    # Original network connectivity (deprecated) - show simplified only
+    print(f"Original network: deprecated (skipped)")
     
     # Simplified network connectivity
     simp_network = SimpleBrainNetwork(num_neurons=10, connectivity_prob=0.1)

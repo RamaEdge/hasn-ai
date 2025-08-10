@@ -31,9 +31,8 @@ hasn-ai/
 │   │   └── training_monitor.py            # Monitoring & analytics
 │   ├── tests/                         # 🧪 Test files (3 files)
 │   │   ├── __init__.py
-│   │   ├── pure_neural_test.py            # Isolated testing (195 lines)
-│   │   ├── simple_neural_test.py          # Basic tests (78 lines)
-│   │   └── neural_response_demo.py        # Response validation (111 lines)
+│   │   ├── diagnostic_test.py             # Diagnostic checks for core spiking
+│   │   └── comprehensive_network_comparison.py  # Simple vs Cognitive comparison
 ├── docs/                              # 📚 All documentation
 │   ├── README.md
 │   ├── BRAIN_INSPIRED_RESEARCH.md
@@ -110,11 +109,9 @@ python src/api/main.py  # then POST /training/interactive
 
 ### Testing:
 ```bash
-# Neural response validation
-python src/tests/pure_neural_test.py
-
-# Simple functionality test
-python src/tests/simple_neural_test.py
+# Diagnostics and comparisons
+python src/tests/diagnostic_test.py
+python src/tests/comprehensive_network_comparison.py
 ```
 
 ---

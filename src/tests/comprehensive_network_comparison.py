@@ -20,9 +20,8 @@ from typing import Dict, List, Tuple, Any
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # Import all three implementations
-from core.simplified_brain_network import SimpleBrainNetwork, demo_simple_network
-from core.advanced_brain_network import AdvancedBrainInspiredNetwork, create_cognitive_brain_network
-from core.optimized_brain_network import OptimizedHASN, create_optimized_brain
+from core.simplified_brain_network import SimpleBrainNetwork
+from core.cognitive_brain_network import CognitiveBrainNetwork, CognitiveConfig
 
 
 class NetworkComparator:
@@ -63,35 +62,19 @@ class NetworkComparator:
             print(f"    ❌ Failed: {e}")
             networks['simplified'] = None
         
-        # 2. Advanced Brain Inspired Network
-        print("  Creating AdvancedBrainInspiredNetwork...")
+        # 2. Cognitive Brain Network
+        print("  Creating CognitiveBrainNetwork...")
         try:
             start_time = time.time()
-            networks['advanced'] = create_cognitive_brain_network()
+            networks['advanced'] = CognitiveBrainNetwork(num_neurons=num_neurons, connectivity_prob=0.1, config=CognitiveConfig())
             networks['advanced_creation_time'] = time.time() - start_time
             print(f"    ✅ Created in {networks['advanced_creation_time']:.3f}s")
         except Exception as e:
             print(f"    ❌ Failed: {e}")
             networks['advanced'] = None
         
-        # 3. Optimized HASN
-        print("  Creating OptimizedHASN...")
-        try:
-            start_time = time.time()
-            # Create modules that total approximately num_neurons
-            module_size = num_neurons // 4
-            modules_config = [
-                (0, module_size),
-                (1, module_size), 
-                (2, module_size),
-                (3, num_neurons - 3 * module_size)
-            ]
-            networks['optimized'] = OptimizedHASN(modules_config)
-            networks['optimized_creation_time'] = time.time() - start_time
-            print(f"    ✅ Created in {networks['optimized_creation_time']:.3f}s")
-        except Exception as e:
-            print(f"    ❌ Failed: {e}")
-            networks['optimized'] = None
+        # 3. Optimized network not present in codebase
+        networks['optimized'] = None
         
         return networks
     
@@ -116,8 +99,8 @@ class NetworkComparator:
                     # Simple input for SimpleBrainNetwork
                     return {i: np.random.random() < 0.1 for i in range(5)}
                 elif network_name == 'advanced':
-                    # Input for AdvancedBrainInspiredNetwork
-                    return np.random.random(10) > 0.9
+                    # Input for CognitiveBrainNetwork: external_input bools
+                    return {i: (np.random.random() < 0.1) for i in range(10)}
                 elif network_name == 'optimized':
                     # Input for OptimizedHASN
                     return {0: {i: np.random.random() < 0.1 for i in range(5)}}
@@ -138,21 +121,14 @@ class NetworkComparator:
                 spikes_recorded = len(sim_results.get('spike_record', []))
                 
             elif network_name == 'advanced':
-                # Run step by step for advanced network
+                # Run step-by-step for cognitive network
                 for step in range(duration):
                     input_data = create_input(step)
-                    network.process_input(input_data)
-                    if hasattr(network, 'get_total_spikes'):
-                        spikes_recorded = network.get_total_spikes()
+                    result = network.step_with_cognition(input_data, context={})
+                    spikes_recorded += result.get('spike_count', 0)
                 
             elif network_name == 'optimized':
-                # Run optimized simulation
-                for step in range(duration // 10):  # Optimized runs at 0.1ms steps
-                    input_data = create_input(step)
-                    network.step_optimized(input_data)
-                # Get spike count from performance metrics
-                metrics = network.get_performance_metrics()
-                spikes_recorded = metrics.get('total_spikes', 0)
+                pass
             
             # Measure final metrics
             execution_time = time.time() - start_time
