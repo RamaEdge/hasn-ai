@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: hasn-monitor
+  namespace: hasn-ai
+spec:
+  schedule: "*/30 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          nodeSelector:
+            storage: "big"
+          restartPolicy: OnFailure
+          containers:
+            - name: monitor
+              image: ghcr.io/OWNER/hasn-ai:latest
+              command: ["python","src/training/training_monitor.py","--report","--visualize","--save-viz","/app/output/training_visualization.png"]
+              volumeMounts:
+                - name: output
+                  mountPath: /app/output
+          volumes:
+            - name: output
+              persistentVolumeClaim:
+                claimName: output-pvc
+
+

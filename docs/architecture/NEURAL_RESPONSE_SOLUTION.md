@@ -123,9 +123,10 @@ This approach mimics how biological brains might generate language:
 
 ## 🚀 Testing the Neural Responses
 
-### Run the Neural Response Demo:
+### Run Diagnostics and Comparison:
 ```bash
-python src/pure_neural_test.py
+python src/tests/diagnostic_test.py
+python src/tests/comprehensive_network_comparison.py
 ```
 
 ### Try Different Inputs:

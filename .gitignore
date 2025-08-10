@@ -119,3 +119,6 @@ docs/build/
 *.sh
 !reorganize.sh
 !cleanup.sh
+.env*
+
+output/

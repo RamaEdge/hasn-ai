@@ -1,8 +1,12 @@
-# Training Interfaces
-"""
-Training interfaces and guides for the brain-inspired networks:
-- brain_ai_interactive.py: Interactive training with neural response generation
-- comprehensive_trainer.py: Systematic training guide
-- interactive_brain_trainer.py: Alternative interactive trainer
-- quick_training_demo.py: Quick training demonstration
+"""Training modules for HASN-AI.
+
+Supported training entrypoints:
+- automated_internet_trainer: Continuous web-sourced training for SimpleBrainNetwork
+- train_cli: CLI wrapper to start/monitor automated training
+- training_monitor: Utilities to analyze training outputs
+
+Note:
+- Removed legacy interactive/comprehensive/quick demo trainers to reduce duplication.
+  Use API interactive training (POST /training/interactive) for CognitiveBrainNetwork episodic training,
+  and use examples under `examples/` for cognitive inference demos.
 """

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hasn-config
+  namespace: hasn-ai
+data:
+  PYTHONPATH: "/app/src"
+
+

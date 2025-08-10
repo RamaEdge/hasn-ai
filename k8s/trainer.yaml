@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hasn-trainer
+  namespace: hasn-ai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hasn-trainer
+  template:
+    metadata:
+      labels:
+        app: hasn-trainer
+    spec:
+      nodeSelector:
+        storage: "big"
+      containers:
+        - name: trainer
+          image: ghcr.io/OWNER/hasn-ai:latest
+          command: ["python","src/training/train_cli.py","start","--profile","production","--continuous"]
+          volumeMounts:
+            - name: output
+              mountPath: /app/output
+          resources:
+            requests:
+              cpu: "300m"
+              memory: "512Mi"
+            limits:
+              cpu: "800m"
+              memory: "1Gi"
+      volumes:
+        - name: output
+          persistentVolumeClaim:
+            claimName: output-pvc
+
+
