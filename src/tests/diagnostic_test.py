@@ -80,23 +80,8 @@ def test_single_neuron_dynamics():
     print("SINGLE NEURON DYNAMICS TEST")
     print("="*50)
     
-    # Test original neuron
-    from core.brain_inspired_network import AdaptiveSpikingNeuron, SpikingNeuronParams
-    orig_params = SpikingNeuronParams()
-    orig_neuron = AdaptiveSpikingNeuron(0, orig_params)
-    
-    print("Original neuron test:")
-    for i in range(100):
-        # Apply strong input
-        input_spikes = {999: True}  # Fake input neuron
-        orig_neuron.add_synapse(999, 50.0)  # Strong weight
-        
-        spiked = orig_neuron.update(0.1, i * 0.1, input_spikes)
-        if spiked:
-            print(f"  Spiked at time {i * 0.1:.1f}ms")
-            break
-        if i % 20 == 0:
-            print(f"  t={i*0.1:.1f}ms: v={orig_neuron.v_membrane:.2f}mV, thresh={orig_neuron.threshold:.2f}mV")
+    # Original neuron (deprecated) test skipped
+    print("Original neuron test: deprecated (skipped)")
     
     # Test simplified neuron
     from core.simplified_brain_network import SimpleSpikingNeuron, NeuronParams
