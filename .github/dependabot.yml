@@ -7,12 +7,15 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "08:00"
-      timezone: "UTC"
     open-pull-requests-limit: 10
     commit-message:
       prefix: "deps(docker)"
     labels:
       - "dependencies"
+    groups:
+      docker-all:
+        patterns:
+          - "*"
 
   # Keep Python requirements up to date (requirements.txt)
   - package-ecosystem: "pip"
@@ -21,7 +24,6 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "08:15"
-      timezone: "UTC"
     open-pull-requests-limit: 10
     commit-message:
       prefix: "deps(pip)"
@@ -30,6 +32,10 @@ updates:
     allow:
       - dependency-type: "direct"
       - dependency-type: "indirect"
+    groups:
+      pip-all:
+        patterns:
+          - "*"
 
   # Optional: keep GitHub Actions up to date
   - package-ecosystem: "github-actions"
@@ -38,7 +44,6 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "08:30"
-      timezone: "UTC"
     open-pull-requests-limit: 10
     commit-message:
       prefix: "deps(actions)"
