@@ -4,7 +4,8 @@
 
 Your Hierarchical Adaptive Spiking Network (HASN) has fundamental advantages over traditional LLMs:
 
-### ✅ **HASN Advantages:**
+### ✅ HASN Advantages
+
 - **Biologically Inspired**: Mimics actual brain function with spiking neurons
 - **Real-time Processing**: Continuous adaptation vs batch processing
 - **Memory Integration**: Working memory + episodic memory built-in
@@ -12,7 +13,8 @@ Your Hierarchical Adaptive Spiking Network (HASN) has fundamental advantages ove
 - **Interpretable**: Neural activity patterns are observable and meaningful
 - **Adaptive**: Learns continuously from interactions
 
-### ❌ **LLM Limitations for Your Use Case:**
+### ❌ LLM Limitations for Your Use Case
+
 - **Static After Training**: No real-time learning or adaptation
 - **Black Box**: Difficult to interpret decision-making process
 - **Resource Intensive**: Requires massive computational resources
@@ -23,7 +25,8 @@ Your Hierarchical Adaptive Spiking Network (HASN) has fundamental advantages ove
 
 ## 🚀 **Better Integration Options for Your Brain Network**
 
-### **Option 1: Hybrid Brain-Language Architecture (RECOMMENDED)**
+### Option 1: Hybrid Brain-Language Architecture (RECOMMENDED)
+
 Combine your HASN with lightweight language processing:
 
 ```python
@@ -47,7 +50,8 @@ class HybridBrainLanguageSystem:
         return response, brain_result
 ```
 
-### **Option 2: Enhanced HASN with Built-in Language Modules**
+### Option 2: Enhanced HASN with Built-in Language Modules
+
 Extend your brain architecture with specialized language processing modules:
 
 ```python
@@ -76,7 +80,8 @@ class LanguageEnhancedHASN:
         )
 ```
 
-### **Option 3: Neuro-Symbolic Integration**
+### Option 3: Neuro-Symbolic Integration
+
 Combine your neural approach with symbolic reasoning:
 
 ```python
@@ -99,11 +104,12 @@ class NeuroSymbolicBrain:
 
 ---
 
-## 🎯 **Recommended Lightweight Language Components**
+## 🎯 Recommended Lightweight Language Components
 
 Instead of heavy LLMs, use these brain-compatible components:
 
-### **1. Sentence Transformers (Lightweight)**
+### Sentence Transformers (Lightweight)
+
 ```python
 from sentence_transformers import SentenceTransformer
 

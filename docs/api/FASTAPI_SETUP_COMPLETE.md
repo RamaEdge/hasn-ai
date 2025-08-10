@@ -108,8 +108,8 @@ print(f"Active modules: {result['data']['stats']['active_modules']}")
 
 FastAPI automatically generates interactive documentation:
 
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+- **Swagger UI**: <http://localhost:8000/docs>
+- **ReDoc**: <http://localhost:8000/redoc>
 
 These interfaces let you:
 
@@ -121,6 +121,7 @@ These interfaces let you:
 ## 📊 What's Happening Under the Hood
 
 ### MockBrainNetwork Simulation
+
 Your API includes a sophisticated brain simulation that:
 
 1. **Text Processing**: Converts natural language to neural activation patterns
@@ -130,6 +131,7 @@ Your API includes a sophisticated brain simulation that:
 5. **State Monitoring**: Tracks brain health and performance metrics
 
 ### Brain Modules Simulated
+
 - **Module 0**: Sensory processing (text length, input characteristics)
 - **Module 1**: Content analysis (keywords, emotions, concepts)  
 - **Module 2**: Context and memory (conversation history, patterns)
@@ -140,6 +142,7 @@ Your API includes a sophisticated brain simulation that:
 To connect with your actual HASN implementation:
 
 1. **Replace MockBrainNetwork** in `src/api/simple_api.py`:
+
 ```python
 # Replace this:
 brain_network = MockBrainNetwork()
@@ -150,20 +153,25 @@ brain_network = AdvancedCognitiveBrain()
 ```
 
 2. **Update method calls** to match your brain network interface
+
 3. **Add any missing methods** to your brain classes
 
 ## 🛠️ Development Features
 
 ### Hot Reload
+
 The API server runs with `--reload`, so code changes automatically restart the server.
 
 ### Error Handling
+
 Comprehensive error handling with detailed error messages and HTTP status codes.
 
 ### Logging
+
 Structured logging for debugging and monitoring.
 
 ### CORS Support
+
 Cross-Origin Resource Sharing enabled for web app integration.
 
 ## 📈 Production Readiness
@@ -181,6 +189,7 @@ This FastAPI setup includes:
 ## 🎉 Success Metrics
 
 After running the test script, you should see:
+
 - ✅ All 8 API tests passing
 - 🧠 Brain responses with confidence scores > 0.5
 - ⚡ Processing times < 100ms
