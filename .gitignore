@@ -120,3 +120,5 @@ docs/build/
 !reorganize.sh
 !cleanup.sh
 .env*
+
+output/
