@@ -49,7 +49,7 @@ python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 
 # Deployment
-gunicorn==21.2.0
+gunicorn==23.0.0
 
 # Optional: Enhanced text processing
 # sentence-transformers==2.2.2
