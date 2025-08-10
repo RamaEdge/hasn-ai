@@ -31,11 +31,11 @@ pip install numpy networkx
 # Optional: pip install matplotlib (for visualizations)
 ```
 
-## 🎯 Running the Demonstrations
+## 🎯 Running the System
 
 ### 1. Simple Brain Demo (Recommended Start)
 ```bash
-python src/simple_brain_demo.py
+python src/demos/simple_brain_demo.py
 ```
 **What it shows:**
 - ⚡ Spiking neural dynamics
@@ -45,7 +45,7 @@ python src/simple_brain_demo.py
 
 ### 2. Advanced Brain Network
 ```bash
-python src/advanced_brain_network.py
+python src/core/simplified_brain_network.py
 ```
 **What it shows:**
 - 🔬 Cognitive capabilities
@@ -53,14 +53,14 @@ python src/advanced_brain_network.py
 - 🔄 Memory consolidation
 - 📊 Multi-scale temporal processing
 
-### 3. Comprehensive Analysis
+### 3. Production API and Training
 ```bash
-python src/demo_and_analysis.py
+# Start API (Cognitive episodic training via POST /training/interactive)
+python src/api/main.py
+
+# Start automated internet training (SimpleBrainNetwork)
+python src/training/train_cli.py start --profile development
 ```
-**What it shows:**
-- 📈 Performance comparisons
-- 📊 Detailed analysis reports
-- 🎯 Brain vs. traditional AI comparison
 
 ## 📊 Understanding the Results
 
@@ -170,10 +170,12 @@ num_steps = 2000     # Increase from 1000
 ## 📚 Learn More
 
 ### Key Files to Explore
-1. **`src/simple_brain_demo.py`** - Start here for basic concepts
-2. **`src/brain_inspired_network.py`** - Core architecture
-3. **`src/advanced_brain_network.py`** - Advanced features
-4. **`BRAIN_INSPIRED_RESEARCH.md`** - Scientific background
+1. **`src/core/simplified_brain_network.py`** - Spiking core
+2. **`src/core/cognitive_brain_network.py`** - Cognitive layer on spiking core
+3. **`src/training/automated_internet_trainer.py`** - Automated trainer
+4. **`src/training/train_cli.py`** - CLI for training
+5. **`src/training/training_monitor.py`** - Monitoring utilities
+6. **`examples/cognitive_inference_demo.py`** - Cognitive demos
 
 ### Understanding the Science
 - **STDP**: Spike-timing dependent plasticity

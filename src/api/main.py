@@ -17,36 +17,21 @@ import os
 # Add src to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+"""Production FastAPI that wires both Simple and Cognitive networks via DI."""
+
 # Import brain components
 try:
-    from core.brain_inspired_network import SimpleBrainNetwork
-    from core.advanced_brain_network import AdvancedCognitiveBrain
+    from core.simplified_brain_network import SimpleBrainNetwork
+    from core.cognitive_brain_network import CognitiveBrainNetwork, CognitiveConfig
 except ImportError:
     # Fallback imports with adjusted paths
-    import sys
-    import os
     brain_core_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'core')
     sys.path.append(brain_core_path)
     try:
-        from brain_inspired_network import SimpleBrainNetwork  
-        from advanced_brain_network import AdvancedCognitiveBrain
-    except ImportError:
-        # Create dummy classes for testing
-        class SimpleBrainNetwork:
-            def __init__(self, module_sizes):
-                self.modules = {i: type('Module', (), {'neurons': [type('Neuron', (), {})() for _ in range(size)]})() for i, size in enumerate(module_sizes)}
-            def process_pattern(self, pattern):
-                return {"total_activity": 0.7, "steps": 100}
-            def get_brain_state(self):
-                return {"status": "active", "modules": len(self.modules)}
-        
-        class AdvancedCognitiveBrain:
-            def __init__(self):
-                self.modules = {}
-            def process_pattern(self, pattern):
-                return {"total_activity": 0.8, "cognitive_load": "medium"}
-            def get_brain_state(self):
-                return {"status": "cognitive", "working_memory": 7}
+        from simplified_brain_network import SimpleBrainNetwork
+        from cognitive_brain_network import CognitiveBrainNetwork, CognitiveConfig
+    except ImportError as e:
+        raise
 
 from api.routes import brain, health, training
 try:
@@ -58,6 +43,7 @@ except ImportError:
 
 from api.middleware.rate_limit import RateLimitMiddleware
 from api.models.responses import APIResponse, ErrorResponse
+from api.adapters.brain_adapters import SimpleBrainAdapter, CognitiveBrainAdapter
 
 # Configure logging
 logging.basicConfig(
@@ -88,25 +74,31 @@ app.add_middleware(
 # Rate limiting middleware
 app.add_middleware(RateLimitMiddleware, calls=100, period=60)  # 100 calls per minute
 
+# Adapters moved to api.adapters.brain_adapters for clarity
+
+
 # Global brain instances
-brain_network = None
-advanced_brain = None
+basic_brain: SimpleBrainAdapter | None = None
+advanced_brain: CognitiveBrainAdapter | None = None
 
 @app.on_event("startup")
 async def startup_event():
     """Initialize brain networks on startup"""
-    global brain_network, advanced_brain
+    global basic_brain, advanced_brain
     
     try:
         logger.info("🧠 Initializing Brain Networks...")
         
-        # Initialize basic brain network
-        brain_network = SimpleBrainNetwork([30, 25, 20, 15])
-        logger.info(f"✅ Basic Brain Network initialized with {sum([30, 25, 20, 15])} neurons")
-        
-        # Initialize advanced cognitive brain
-        advanced_brain = AdvancedCognitiveBrain()
-        logger.info("✅ Advanced Cognitive Brain initialized")
+        # Initialize basic (simplified) brain network
+        simple = SimpleBrainNetwork(num_neurons=100, connectivity_prob=0.05)
+        basic_brain = SimpleBrainAdapter(simple)
+        logger.info("✅ SimpleBrainNetwork initialized (100 neurons)")
+
+        # Initialize advanced cognitive brain network
+        cognitive_cfg = CognitiveConfig(max_episodic_memories=200)
+        cognitive = CognitiveBrainNetwork(num_neurons=150, connectivity_prob=0.05, config=cognitive_cfg)
+        advanced_brain = CognitiveBrainAdapter(cognitive)
+        logger.info("✅ CognitiveBrainNetwork initialized (150 neurons)")
         
         logger.info("🚀 Brain API startup complete!")
         
@@ -122,9 +114,9 @@ async def shutdown_event():
 
 # Dependency to get brain instances
 def get_brain_network():
-    if brain_network is None:
+    if basic_brain is None:
         raise HTTPException(status_code=503, detail="Brain network not initialized")
-    return brain_network
+    return basic_brain
 
 def get_advanced_brain():
     if advanced_brain is None:
@@ -133,6 +125,13 @@ def get_advanced_brain():
 
 # Include routers
 app.include_router(health.router, prefix="/health", tags=["Health"])
+
+# Wire dependencies for route modules via FastAPI overrides
+app.dependency_overrides[brain.get_brain_network] = get_brain_network
+app.dependency_overrides[brain.get_advanced_brain] = get_advanced_brain
+app.dependency_overrides[training.get_brain_network] = get_brain_network
+app.dependency_overrides[training.get_advanced_brain] = get_advanced_brain
+
 app.include_router(brain.router, prefix="/brain", tags=["Brain Processing"])
 app.include_router(training.router, prefix="/training", tags=["Training"])
 

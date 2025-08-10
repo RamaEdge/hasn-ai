@@ -17,8 +17,8 @@ hasn-ai/
 │   ├── __init__.py                    # Package initialization
 │   ├── core/                          # 🏗️ Core architectures (2 files)
 │   │   ├── __init__.py
-│   │   ├── brain_inspired_network.py      # Main HASN implementation (465 lines)
-│   │   └── advanced_brain_network.py      # Cognitive capabilities (511 lines)
+│   │   ├── simplified_brain_network.py    # Main brain implementation (254 lines, 2.3x faster)
+│   │   # Advanced/optimized versions removed after performance testing
 │   ├── demos/                         # 🎭 Working demonstrations (3 files)
 │   │   ├── __init__.py
 │   │   ├── simple_brain_demo.py           # Basic HASN demo (433 lines)
@@ -26,15 +26,13 @@ hasn-ai/
 │   │   └── demo_and_analysis.py           # Comprehensive analysis (367 lines)
 │   ├── training/                      # 🎯 Training interfaces (4 files)
 │   │   ├── __init__.py
-│   │   ├── brain_ai_interactive.py        # Main interactive trainer (682 lines)
-│   │   ├── comprehensive_trainer.py       # Systematic training (503 lines)
-│   │   ├── interactive_brain_trainer.py   # Alternative trainer (515 lines)
-│   │   └── quick_training_demo.py         # Quick demo (241 lines)
+│   │   ├── automated_internet_trainer.py  # Internet learning orchestrator
+│   │   ├── train_cli.py                   # CLI for automated training
+│   │   └── training_monitor.py            # Monitoring & analytics
 │   ├── tests/                         # 🧪 Test files (3 files)
 │   │   ├── __init__.py
-│   │   ├── pure_neural_test.py            # Isolated testing (195 lines)
-│   │   ├── simple_neural_test.py          # Basic tests (78 lines)
-│   │   └── neural_response_demo.py        # Response validation (111 lines)
+│   │   ├── diagnostic_test.py             # Diagnostic checks for core spiking
+│   │   └── comprehensive_network_comparison.py  # Simple vs Cognitive comparison
 ├── docs/                              # 📚 All documentation
 │   ├── README.md
 │   ├── BRAIN_INSPIRED_RESEARCH.md
@@ -82,7 +80,7 @@ hasn-ai/
 ### Test Core Functionality:
 ```bash
 # Test basic brain network
-python src/core/brain_inspired_network.py
+python src/core/simplified_brain_network.py
 
 # Test advanced cognitive network
 python src/core/advanced_brain_network.py
@@ -102,20 +100,18 @@ python src/demos/demo_and_analysis.py
 
 ### Training and Interaction:
 ```bash
-# Main interactive training interface
-python src/training/brain_ai_interactive.py
+# Automated internet training (SimpleBrainNetwork)
+python src/training/train_cli.py start --profile development
 
-# Quick training demo
-python src/training/quick_training_demo.py
+# Cognitive episodic training via API
+python src/api/main.py  # then POST /training/interactive
 ```
 
 ### Testing:
 ```bash
-# Neural response validation
-python src/tests/pure_neural_test.py
-
-# Simple functionality test
-python src/tests/simple_neural_test.py
+# Diagnostics and comparisons
+python src/tests/diagnostic_test.py
+python src/tests/comprehensive_network_comparison.py
 ```
 
 ---
@@ -123,13 +119,13 @@ python src/tests/simple_neural_test.py
 ## 📊 **Code Quality Assessment**
 
 ### 🏆 **High Quality** (Production Ready):
-- ✅ `src/core/brain_inspired_network.py` - Well-structured HASN implementation
+- ✅ `src/core/simplified_brain_network.py` - Well-structured simplified implementation
 - ✅ `src/core/advanced_brain_network.py` - Fixed cognitive capabilities version
 - ✅ `src/demos/working_advanced_brain.py` - **Excellent working demo with clear output**
 - ✅ `src/training/brain_ai_interactive.py` - Comprehensive training interface
 
 ### ⚠️ **Medium Quality** (Review Recommended):
-- `src/training/comprehensive_trainer.py` vs `interactive_brain_trainer.py` - Overlapping functionality
+None
 - Test files could be consolidated into comprehensive test suite
 
 ### ❌ **Deprecated** (Removed):
@@ -167,7 +163,7 @@ python src/tests/simple_neural_test.py
 
 **For Development**: Use files in `src/core/`  
 **For Demonstrations**: Use files in `src/demos/` (especially `working_advanced_brain.py`)  
-**For Training**: Use `src/training/brain_ai_interactive.py`  
+**For Training**: Use `src/training/train_cli.py` and API `/training/interactive`
 **For Testing**: Use files in `src/tests/`  
 
 **The project is now well-organized, functional, and ready for further development!** 🚀

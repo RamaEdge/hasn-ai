@@ -159,7 +159,7 @@ Vocabulary Check & Learning:
 - "you" → Existing pattern (strengthen)
 ```
 
-### **Step 2: Neural Processing**
+### **Step 2: Neural Processing (Spiking + Cognitive)**
 ```
 Neural Pattern Processing:
     ↓
@@ -173,7 +173,7 @@ Synaptic Weights Update:
 - Inactive connections weaken
 ```
 
-### **Step 3: Learning & Storage**
+### **Step 3: Learning & Storage (Includes Episodic Memory)**
 ```
 Learning Updates:
     ↓
@@ -273,6 +273,28 @@ brain.language_module.context_associations = {
 ---
 
 ## 🚀 **How to Monitor Training Progress**
+### Train Cognitive Episodic Memory via API
+```bash
+curl -s -X POST http://localhost:8000/training/interactive \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "input_data": [
+      {"input": {"text": "Hello world", "context": {"concept": "greeting", "source": "doc"}}},
+      {"input": {"pattern": {"0": {"0": true, "1": true}}, "context": {"concept": "colors"}}, "label": "colors"}
+    ],
+    "epochs": 2,
+    "learning_rate": 0.01
+  }'
+```
+This stores episodic memories because each sample includes `context`.
+
+### Automated Training (SimpleBrainNetwork)
+Use the CLI to run automated internet training and monitor results:
+```bash
+python src/training/train_cli.py start --profile development
+python src/training/train_cli.py status
+```
+
 
 ### **Check Vocabulary Growth:**
 ```python

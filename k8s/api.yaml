@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hasn-api
+  namespace: hasn-ai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hasn-api
+  template:
+    metadata:
+      labels:
+        app: hasn-api
+    spec:
+      nodeSelector:
+        storage: "big"
+      containers:
+        - name: api
+          image: ghcr.io/OWNER/hasn-ai:latest
+          env:
+            - name: PYTHONPATH
+              valueFrom:
+                configMapKeyRef:
+                  name: hasn-config
+                  key: PYTHONPATH
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: output
+              mountPath: /app/output
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+      volumes:
+        - name: output
+          persistentVolumeClaim:
+            claimName: output-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hasn-api-svc
+  namespace: hasn-ai
+spec:
+  selector:
+    app: hasn-api
+  ports:
+    - port: 80
+      targetPort: 8000
+      protocol: TCP
+      name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hasn-api-ing
+  namespace: hasn-ai
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+    - host: hasn.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hasn-api-svc
+                port:
+                  number: 80
+
+

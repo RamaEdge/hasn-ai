@@ -54,43 +54,47 @@
 **Goal**: Deploy the already-complete system
 
 #### Week 1: Containerization & Deployment
-```bash
-# 1. Docker containerization (main gap)
-Dockerfile
-docker-compose.yml
-docker-compose.prod.yml
-
-# 2. Kubernetes manifests
-k8s/
-├── deployment.yaml
-├── service.yaml
-├── ingress.yaml
-└── configmap.yaml
-
-# 3. Environment configuration
-.env.production
-.env.staging
-config/
-├── production.json
-└── staging.json
+Docker and k3s manifests added:
 ```
+Dockerfile
+k8s/
+  namespace.yaml
+  configmap.yaml
+  pvc.yaml
+  api.yaml
+  trainer.yaml
+  monitor.yaml
+.github/workflows/docker-build.yml
+```
+Deployment steps (k3s on Raspberry Pi 5):
+```bash
+# Label nodes (two big-storage nodes, one small)
+kubectl label nodes rpi5-big-a storage=big
+kubectl label nodes rpi5-big-b storage=big
+kubectl label nodes rpi5-small storage=small
+
+# Apply manifests
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/pvc.yaml
+kubectl apply -f k8s/api.yaml
+kubectl apply -f k8s/trainer.yaml
+kubectl apply -f k8s/monitor.yaml
+
+# Access API (Traefik Ingress)
+# Add /etc/hosts on Mac: <cluster_ip> hasn.local
+```
+Image build and push (multi-arch):
+```bash
+docker buildx create --use --name hasn-builder || true
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -t ghcr.io/<OWNER_OR_ORG>/hasn-ai:latest \
+  --push .
+```
+Update `k8s/*.yaml` image to `ghcr.io/<OWNER_OR_ORG>/hasn-ai:latest`.
 
 #### Week 2: CI/CD Pipeline
-```bash
-# 4. GitHub Actions workflows
-.github/workflows/
-├── test.yml              # Run tests on PR
-├── build.yml            # Build Docker images
-├── deploy-staging.yml   # Deploy to staging
-└── deploy-prod.yml      # Deploy to production
-
-# 5. Testing framework
-tests/
-├── unit/                # Unit tests for brain components
-├── integration/         # API integration tests
-├── performance/         # Load testing for brain APIs
-└── e2e/                 # End-to-end brain training tests
-```
+GitHub Actions workflow `.github/workflows/docker-build.yml` builds and pushes multi-arch images to GHCR on push to `main` and tags `v*.*.*`.
 
 ### **Phase 2: Neural Scaling & Performance (Weeks 3-4)**
 **Goal**: Scale beyond current 90-neuron limitation and optimize performance
@@ -325,10 +329,11 @@ class NeuromorphicAccelerator:
    - `src/api/main.py` (187 lines) - Production FastAPI
    - Multiple deployment options for different use cases
 
-3. **🤖 Revolutionary Automated Training**:
-   - `src/training/automated_internet_trainer.py` (792 lines) - Internet learning
+3. **🤖 Revolutionary Training (Updated)**:
+   - `src/training/automated_internet_trainer.py` (792 lines) - Internet learning (SimpleBrainNetwork)
    - `src/api/routes/automated_training.py` (385 lines) - Training API
-   - Continuous self-improvement from web sources
+   - `src/api/main.py` Cognitive adapter now supports `train_step` and config setters
+   - `POST /training/interactive` can train episodic memory (requires `context` per sample)
    - Quality filtering and monitoring systems
 
 4. **📚 Comprehensive Documentation**:
@@ -344,9 +349,9 @@ class NeuromorphicAccelerator:
 
 ### **🚀 Impact on Production Timeline:**
 - **Original estimate**: 16-week journey to production
-- **Current status**: **85% complete** - ready for immediate deployment
-- **Remaining work**: Primarily containerization and enterprise features
-- **Time to production**: **1-2 weeks** instead of 16 weeks!
+- **Current status**: **88% complete** – episodic-memory training available via API
+- **Remaining work**: Containerization, CI workflows, auth hardening
+- **Time to production**: **1-2 weeks**
 
 ---
 

@@ -133,8 +133,7 @@ def test_brain_modules():
     sys.path.insert(0, 'src')
     
     brain_tests = [
-        ("core.brain_inspired_network", "Core HASN architecture"),
-        ("core.advanced_brain_network", "Advanced cognitive brain"),
+        ("core.simplified_brain_network", "Core simplified brain architecture"),
         ("training.interactive_brain_trainer", "Interactive training system")
     ]
     
@@ -177,14 +176,13 @@ async def test_training_system():
     
     try:
         # Test core imports
-        from core.brain_inspired_network import SimpleBrainNetwork
-        from core.advanced_brain_network import AdvancedCognitiveBrain
+        from core.simplified_brain_network import SimpleBrainNetwork
         from training.automated_internet_trainer import AutomatedInternetTrainer, TrainingConfig
         
         print("✅ Core imports successful")
         
         # Test brain creation
-        brain = AdvancedCognitiveBrain()
+        brain = SimpleBrainNetwork(num_neurons=50, connectivity_prob=0.1)
         print("✅ Brain network created")
         
         # Test configuration

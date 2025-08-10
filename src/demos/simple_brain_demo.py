@@ -6,6 +6,7 @@ A streamlined demonstration of the core HASN concepts
 import numpy as np
 import json
 import time
+import os
 from typing import Dict, List
 from collections import defaultdict, deque
 
@@ -351,7 +352,11 @@ def main_demonstration():
     print(f"🎭 Adaptation Score: {analysis['adaptation_score']:.4f}")
     
     # Save detailed results
-    output_dir = "/Users/ravi.chillerega/sources/cde-hack-session/output"
+    # Create output directory in current project
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(current_dir))
+    output_dir = os.path.join(project_root, 'output')
+    os.makedirs(output_dir, exist_ok=True)
     
     # Prepare serializable results
     serializable_results = {
