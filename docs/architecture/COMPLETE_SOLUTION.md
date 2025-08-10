@@ -6,30 +6,24 @@ Your brain-inspired neural network with continuous learning capabilities is now 
 
 ## 🚀 Quick Start
 
-### Option 1: Interactive System (Recommended)
+### Option 1: Production API (Recommended)
 ```bash
-python src/brain_ai_interactive.py
+python src/api/main.py
+```
+Use the interactive docs at http://localhost:8000/docs. Train episodic memory via:
+```bash
+curl -s -X POST http://localhost:8000/training/interactive -H 'Content-Type: application/json' -d '{"input_data":[{"input":{"text":"Red is a color","context":{"concept":"colors"}}}]}'
 ```
 
-This launches a comprehensive interface with:
-- 💬 **Chat Mode**: Talk directly with the AI
-- 🎓 **Training Mode**: Multiple training paradigms  
-- 📊 **Statistics**: Monitor learning progress
-- 🔬 **Quick Demo**: See immediate results
-
-### Option 2: Simple Training Demo
+### Option 2: Automated Internet Training (SimpleBrainNetwork)
 ```bash
-python src/quick_training_demo.py
+python src/training/train_cli.py start --profile development
 ```
 
-This shows rapid pattern learning with live metrics.
-
-### Option 3: Advanced Interactive Training
+### Option 3: Cognitive Inference Demos
 ```bash
-python src/interactive_brain_trainer.py
+python examples/cognitive_inference_demo.py
 ```
-
-Full-featured training with text-to-pattern conversion and Q&A.
 
 ## 🏗️ Architecture Overview
 
@@ -96,7 +90,7 @@ Full-featured training with text-to-pattern conversion and Q&A.
 
 ### Basic Training Loop
 ```python
-from simple_brain_demo import SimpleBrainNetwork
+from core.simplified_brain_network import SimpleBrainNetwork
 
 # Create network
 network = SimpleBrainNetwork([30, 25, 20, 15])
@@ -110,17 +104,8 @@ for epoch in range(20):
     print(f"Epoch {epoch}: Activity {result['total_activity']:.3f}")
 ```
 
-### Interactive Training
-```python
-from brain_ai_interactive import InteractiveBrainAI
-
-# Launch interactive system
-brain_ai = InteractiveBrainAI()
-brain_ai.main_menu()
-
-# Or chat directly
-brain_ai.chat_mode()
-```
+### Interactive Training via API
+Use `POST /training/interactive` with `context` to form episodic memories.
 
 ### Text-to-Pattern Training
 ```python

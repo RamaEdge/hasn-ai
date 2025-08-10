@@ -288,6 +288,13 @@ curl -s -X POST http://localhost:8000/training/interactive \
 ```
 This stores episodic memories because each sample includes `context`.
 
+### Automated Training (SimpleBrainNetwork)
+Use the CLI to run automated internet training and monitor results:
+```bash
+python src/training/train_cli.py start --profile development
+python src/training/train_cli.py status
+```
+
 
 ### **Check Vocabulary Growth:**
 ```python
