@@ -7,24 +7,28 @@ This automated training system enables the Hierarchical Adaptive Spiking Network
 ## ✨ **Key Features**
 
 ### **🌐 Internet Data Collection**
+
 - **Multi-source scraping**: Wikipedia, Reddit, RSS feeds, news sites
 - **Quality filtering**: Automatic content quality assessment
 - **Rate limiting**: Respectful, human-like request patterns
 - **Duplicate detection**: Avoids learning from similar content
 
 ### **🧠 Neural Pattern Conversion**
+
 - **Text-to-neural**: Converts web content to brain-compatible patterns
 - **Context awareness**: Different activation patterns for different content types
 - **Vocabulary learning**: Builds neural word representations over time
 - **Concept extraction**: Identifies and categorizes main topics
 
 ### **📊 Intelligent Training**
+
 - **Continuous learning**: 24/7 automated knowledge acquisition
 - **Quality-based prioritization**: Focuses on high-quality educational content
 - **Memory consolidation**: Periodic "sleep cycles" for memory strengthening
 - **Concept tracking**: Monitors what the brain has learned
 
 ### **📈 Monitoring & Analytics**
+
 - **Real-time dashboards**: Live training progress monitoring
 - **Learning velocity tracking**: Concepts and patterns learned per hour
 - **Quality trend analysis**: Content quality over time
@@ -51,12 +55,14 @@ Progress Monitoring & Analytics
 ## 🎯 **Quick Start**
 
 ### **1. Install Dependencies**
+
 ```bash
 cd hasn-ai
 pip install -r requirements.txt
 ```
 
 ### **2. Start Automated Training**
+
 ```bash
 # Basic training (development mode)
 python src/training/train_cli.py start
@@ -69,6 +75,7 @@ python src/training/train_cli.py start --load-state output/previous_state.json
 ```
 
 ### **3. Monitor Training Progress**
+
 ```bash
 # Check current status
 python src/training/train_cli.py status
@@ -86,18 +93,21 @@ python src/training/train_cli.py visualize
 ## ⚙️ **Configuration Profiles**
 
 ### **Development Profile**
+
 - 10 articles per session
 - 5-minute intervals
 - Quality threshold: 0.4
 - **Best for**: Testing and experimentation
 
 ### **Production Profile** 
+
 - 50 articles per session
 - 1-hour intervals  
 - Quality threshold: 0.6
 - **Best for**: Regular automated training
 
 ### **Research Profile**
+
 - 100 articles per session
 - 30-minute intervals
 - Quality threshold: 0.7
@@ -108,18 +118,21 @@ python src/training/train_cli.py visualize
 The system tracks comprehensive metrics:
 
 ### **Learning Progress**
+
 - **Concepts Discovered**: Unique topics learned
 - **Patterns Learned**: Neural patterns stored
 - **Quality Scores**: Average content quality
 - **Learning Velocity**: Rate of knowledge acquisition
 
 ### **Content Analysis**
+
 - **Source Effectiveness**: Which sources provide best content
 - **Topic Distribution**: What subjects are being learned
 - **Quality Trends**: Content quality over time
 - **Concept Clustering**: Related knowledge areas
 
 ### **Brain Activity**
+
 - **Neural Activation**: Which brain modules are most active
 - **Memory Utilization**: Working memory usage patterns
 - **Attention Patterns**: What content gets most attention
@@ -128,6 +141,7 @@ The system tracks comprehensive metrics:
 ## 🧠 **How It Works**
 
 ### **1. Content Collection**
+
 ```python
 async def collect_all_sources():
     # Scrape from multiple sources
@@ -143,6 +157,7 @@ async def collect_all_sources():
 ```
 
 ### **2. Neural Pattern Conversion**
+
 ```python
 def text_to_neural_pattern(text, context):
     # Preprocess text
@@ -160,6 +175,7 @@ def text_to_neural_pattern(text, context):
 ```
 
 ### **3. Brain Training**
+
 ```python
 async def train_on_objectives(objectives):
     for objective in objectives:
@@ -197,6 +213,7 @@ output/
 ## 🛠️ **Advanced Usage**
 
 ### **Custom Configuration**
+
 ```python
 from training.automated_internet_trainer import TrainingConfig
 
@@ -213,6 +230,7 @@ await trainer.start_training(continuous=True)
 ```
 
 ### **Programmatic Control**
+
 ```python
 import asyncio
 from training.automated_internet_trainer import AutomatedInternetTrainer
@@ -234,6 +252,7 @@ asyncio.run(custom_training())
 ```
 
 ### **Monitoring Integration**
+
 ```python
 from training.training_monitor import TrainingMonitor
 
@@ -253,18 +272,21 @@ monitor.real_time_monitor(refresh_interval=30)
 ## 🔒 **Ethical Considerations**
 
 ### **Respectful Scraping**
+
 - **Rate limiting**: 1-2 second delays between requests
 - **Robot-friendly**: Respects robots.txt files
 - **Human-like headers**: Appears as regular browser traffic
 - **Source diversity**: Spreads load across multiple sources
 
 ### **Content Quality**
+
 - **Educational focus**: Prioritizes educational and factual content
 - **Spam filtering**: Removes low-quality and promotional content
 - **Duplicate avoidance**: Prevents learning from repetitive sources
 - **Quality scoring**: Emphasizes well-written, informative content
 
 ### **Privacy & Security**
+
 - **No personal data**: Only collects publicly available information
 - **No user tracking**: Doesn't store or track user behavior
 - **Local processing**: All analysis happens locally
@@ -273,12 +295,14 @@ monitor.real_time_monitor(refresh_interval=30)
 ## 📊 **Performance & Scalability**
 
 ### **Efficiency Metrics**
+
 - **Memory usage**: ~200MB for standard training
 - **CPU usage**: Low impact, mostly I/O bound
 - **Storage**: ~1MB per 1000 articles processed
 - **Network**: ~10-50KB per article collected
 
 ### **Scaling Options**
+
 - **Distributed collection**: Multiple collection workers
 - **Cloud deployment**: AWS/GCP integration ready
 - **Database storage**: PostgreSQL/MongoDB support
@@ -287,6 +311,7 @@ monitor.real_time_monitor(refresh_interval=30)
 ## 🚀 **Future Enhancements**
 
 ### **Planned Features**
+
 - **Multi-language support**: Non-English content processing
 - **Image understanding**: Visual content integration
 - **Audio processing**: Podcast and speech content
@@ -294,6 +319,7 @@ monitor.real_time_monitor(refresh_interval=30)
 - **Knowledge graphs**: Relationship mapping between concepts
 
 ### **Advanced AI Features**
+
 - **Self-reflection**: Brain analyzing its own learning
 - **Curiosity-driven learning**: Seeking out novel information
 - **Concept hierarchy**: Building knowledge taxonomies
@@ -305,6 +331,7 @@ monitor.real_time_monitor(refresh_interval=30)
 ### **Common Issues**
 
 **Training not starting:**
+
 ```bash
 # Check configuration
 python src/training/train_cli.py profiles
@@ -314,6 +341,7 @@ python src/training/train_cli.py start --profile development
 ```
 
 **Low quality scores:**
+
 ```bash
 # Adjust quality threshold
 # Edit src/training/training_config.json
@@ -321,6 +349,7 @@ python src/training/train_cli.py start --profile development
 ```
 
 **Network errors:**
+
 ```bash
 # Increase request delays
 "request_delay": 3.0  # 3 second delays
@@ -328,12 +357,14 @@ python src/training/train_cli.py start --profile development
 ```
 
 **Memory issues:**
+
 ```bash
 # Reduce session size
 "max_articles_per_session": 20  # Smaller batches
 ```
 
 ### **Debug Mode**
+
 ```bash
 # Enable verbose logging
 export PYTHONPATH=$PYTHONPATH:src

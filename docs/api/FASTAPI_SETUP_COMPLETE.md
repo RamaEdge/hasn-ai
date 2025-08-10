@@ -27,21 +27,25 @@ python test_api.py
 ## 📡 API Endpoints
 
 ### Core Brain Processing
+
 - **`POST /brain/process`** - Process neural activation patterns
 - **`POST /brain/text-to-pattern`** - Convert text to neural patterns  
 - **`GET /brain/state`** - Get current brain state
 
 ### Interactive Chat
+
 - **`POST /chat`** - Chat with the brain network
 - **`GET /brain/conversations`** - View conversation history
 
 ### System Health
+
 - **`GET /health`** - System health and metrics
 - **`GET /`** - API information and status
 
 ## 🧠 Example Usage
 
 ### 1. Neural Pattern Processing
+
 ```python
 import requests
 
@@ -65,6 +69,7 @@ print(f"Active neurons: {result['processing_result']['active_neurons']}")
 ```
 
 ### 2. Interactive Chat
+
 ```python
 import requests
 
@@ -85,6 +90,7 @@ print(f"Processing time: {result['processing_time_ms']}ms")
 ```
 
 ### 3. Text to Neural Pattern
+
 ```python
 import requests
 
@@ -106,6 +112,7 @@ FastAPI automatically generates interactive documentation:
 - **ReDoc**: http://localhost:8000/redoc
 
 These interfaces let you:
+
 - 📋 See all available endpoints
 - 🧪 Test API calls directly in the browser
 - 📚 View request/response schemas

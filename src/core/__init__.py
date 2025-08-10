@@ -14,5 +14,5 @@ CBN adds cognitive capabilities:
 - Memory consolidation and strengthening over time
 """
 
-from .simplified_brain_network import *
 from .cognitive_brain_network import *
+from .simplified_brain_network import *

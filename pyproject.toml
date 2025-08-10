@@ -1,0 +1,41 @@
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+exclude = '''
+/( 
+    \.venv
+  | build
+  | dist
+  | output
+  | docs
+  | node_modules
+  | \.git
+)/
+'''
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+respect-gitignore = true
+extend-exclude = ["output", "docs", "build", "dist", ".venv"]
+src = ["src", "examples", "."]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = [
+  "E203",  # Whitespace before ':' (Black compatible)
+  "E501",  # Let Black handle line-length; keep lint less strict
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/api/main.py" = ["E402"]
+"src/api/simple_api.py" = ["E402", "F811"]
+"src/core/__init__.py" = ["F403"]
+"examples/*.py" = ["F841"]
+"demonstrate_brain_portability.py" = ["F841"]
+"src/brain_language_enhanced.py" = ["F841"]
+"src/api/routes/automated_training.py" = ["E722"]
+"src/training/train_cli.py" = ["E722"]
+"src/training/training_monitor.py" = ["E722"]
+
+
