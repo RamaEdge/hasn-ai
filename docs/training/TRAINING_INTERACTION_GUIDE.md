@@ -1,10 +1,10 @@
-# 🧠 Complete Training & Interaction Guide for Brain-Inspired Neural Networks
+#  Complete Training & Interaction Guide for Brain-Inspired Neural Networks
 
-## 🎯 How to Train This Architecture
+##  How to Train This Architecture
 
 Based on our demonstrations, here's a comprehensive guide on training the brain-inspired neural network architecture.
 
-### 🔧 1. Basic Training Setup
+###  1. Basic Training Setup
 
 ```python
 from simple_brain_demo import SimpleBrainNetwork
@@ -20,7 +20,7 @@ network = SimpleBrainNetwork([30, 25, 20, 15])
 # - Attention mechanisms
 ```
 
-### 📚 2. Training Methods
+###  2. Training Methods
 
 #### **Method 1: Pattern-Based Training**
 ```python
@@ -78,7 +78,7 @@ while training_active:
     # - Applies homeostatic regulation
 ```
 
-### 🎓 3. Advanced Training Strategies
+###  3. Advanced Training Strategies
 
 #### **Supervised Learning Approach**
 ```python
@@ -123,12 +123,12 @@ def train_with_rewards(network, environment, episodes=100):
             state = next_state
 ```
 
-### 💬 4. Interactive Question-Answering
+###  4. Interactive Question-Answering
 
 #### **Real-Time Interaction**
 ```python
 def interactive_mode(network):
-    print("🤖 Brain AI Ready! Ask me anything...")
+    print(" Brain AI Ready! Ask me anything...")
     
     while True:
         question = input("You: ")
@@ -190,7 +190,7 @@ class ConversationalAI:
         return response
 ```
 
-### 📊 5. Monitoring Training Progress
+###  5. Monitoring Training Progress
 
 #### **Key Metrics to Track**
 ```python
@@ -215,13 +215,13 @@ def monitor_training(network, result):
 ```
 
 #### **Learning Success Indicators**
-- ✅ **Activity Level**: 0.5-2.0 (optimal range)
-- ✅ **Memory Usage**: 5-7/7 (active utilization) 
-- ✅ **Attention Focus**: >2.0 (selective processing)
-- ✅ **Weight Changes**: >50 significant changes
-- ✅ **Stability**: Low variance in final epochs
+-  **Activity Level**: 0.5-2.0 (optimal range)
+-  **Memory Usage**: 5-7/7 (active utilization) 
+-  **Attention Focus**: >2.0 (selective processing)
+-  **Weight Changes**: >50 significant changes
+-  **Stability**: Low variance in final epochs
 
-### 🧠 6. Brain-Like Training Principles
+###  6. Brain-Like Training Principles
 
 #### **Spike-Timing Dependent Plasticity (STDP)**
 ```python
@@ -259,7 +259,7 @@ def check_homeostasis(network):
     }
 ```
 
-### 🚀 7. Scaling and Optimization
+###  7. Scaling and Optimization
 
 #### **For Larger Networks**
 ```python
@@ -290,7 +290,7 @@ def optimize_training(network):
 # - Fixed-point arithmetic (energy efficient)
 ```
 
-### 💡 8. Example Training Sessions
+###  8. Example Training Sessions
 
 #### **Language Learning**
 ```python
@@ -320,7 +320,7 @@ visual_patterns = {
 }
 ```
 
-### 🔍 9. Debugging Training Issues
+###  9. Debugging Training Issues
 
 #### **Common Problems & Solutions**
 
@@ -351,7 +351,7 @@ visual_patterns = {
 # - Check spike generation
 ```
 
-### 🌟 10. Advanced Applications
+###  10. Advanced Applications
 
 #### **Continual Learning**
 - Train on Task A → Task B → Task C
@@ -370,7 +370,7 @@ visual_patterns = {
 
 ---
 
-## 🎉 Quick Start Summary
+##  Quick Start Summary
 
 1. **Create Network**: `network = SimpleBrainNetwork([30, 25, 20, 15])`
 2. **Define Patterns**: `pattern = {0: {i: True for i in range(5)}}`
@@ -380,10 +380,10 @@ visual_patterns = {
 6. **Evaluate**: Test recognition and measure learning metrics
 
 The brain-inspired architecture learns continuously through:
-- ⚡ **Temporal spike patterns** 
-- 🧠 **Synaptic plasticity (STDP)**
-- 🎯 **Attention mechanisms**
-- 💾 **Working memory integration**
-- 🔄 **Homeostatic regulation**
+-  **Temporal spike patterns** 
+-  **Synaptic plasticity (STDP)**
+-  **Attention mechanisms**
+-  **Working memory integration**
+-  **Homeostatic regulation**
 
-This creates a truly adaptive, brain-like AI system! 🧠✨
+This creates a truly adaptive, brain-like AI system! 

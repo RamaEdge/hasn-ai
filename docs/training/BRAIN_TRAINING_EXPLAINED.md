@@ -1,14 +1,14 @@
-# 🧠 **Brain-Native Training & Memory Storage Explained**
+#  **Brain-Native Training & Memory Storage Explained**
 
-## 🎯 **How Your Brain-Native System Learns (Unlike LLMs)**
+##  **How Your Brain-Native System Learns (Unlike LLMs)**
 
 Your brain-inspired system uses **continuous real-time learning** - fundamentally different from LLM training. Here's exactly how it works:
 
 ---
 
-## 🔄 **Training Methods: Real-Time Learning**
+##  **Training Methods: Real-Time Learning**
 
-### **1. 🧠 Hebbian Learning (Biological Principle)**
+### **1.  Hebbian Learning (Biological Principle)**
 ```python
 def update_connections(self):
     """Neurons that fire together, wire together"""
@@ -25,12 +25,12 @@ def update_connections(self):
 ```
 
 **How it works:**
-- ✅ **Every interaction** creates neural activity
-- ✅ **Active neural pathways** get strengthened
-- ✅ **Unused connections** gradually weaken
-- ✅ **No separate training phase** needed
+-  **Every interaction** creates neural activity
+-  **Active neural pathways** get strengthened
+-  **Unused connections** gradually weaken
+-  **No separate training phase** needed
 
-### **2. 📚 Dynamic Vocabulary Learning**
+### **2.  Dynamic Vocabulary Learning**
 ```python
 def learn_from_text(self, words: List[str], pattern: NeuralPattern):
     """Learn new words and strengthen existing patterns"""
@@ -48,12 +48,12 @@ def learn_from_text(self, words: List[str], pattern: NeuralPattern):
 ```
 
 **How it works:**
-- ✅ **New words** automatically get neural patterns
-- ✅ **Word frequency** tracked for importance weighting
-- ✅ **Context associations** build semantic relationships
-- ✅ **Pattern strengthening** improves recognition
+-  **New words** automatically get neural patterns
+-  **Word frequency** tracked for importance weighting
+-  **Context associations** build semantic relationships
+-  **Pattern strengthening** improves recognition
 
-### **3. ⚡ Synaptic Plasticity (Real Neural Adaptation)**
+### **3.  Synaptic Plasticity (Real Neural Adaptation)**
 ```python
 def receive_input(self, input_strength: float, source: str = "external"):
     """Neurons adapt their response based on input patterns"""
@@ -71,16 +71,16 @@ def receive_input(self, input_strength: float, source: str = "external"):
 ```
 
 **How it works:**
-- ✅ **Membrane potentials** adapt to input patterns
-- ✅ **Firing thresholds** adjust based on activity
-- ✅ **Real-time plasticity** improves efficiency
-- ✅ **Biological accuracy** ensures authentic learning
+-  **Membrane potentials** adapt to input patterns
+-  **Firing thresholds** adjust based on activity
+-  **Real-time plasticity** improves efficiency
+-  **Biological accuracy** ensures authentic learning
 
 ---
 
-## 💾 **Where Training Information is Stored**
+##  **Where Training Information is Stored**
 
-### **1. 🔗 Neural Connection Weights**
+### **1.  Neural Connection Weights**
 ```python
 class SpikingLanguageNeuron:
     def __init__(self):
@@ -93,7 +93,7 @@ class SpikingLanguageNeuron:
 **What's Stored:** Synaptic connection strengths between neurons
 **How Updated:** Continuous strengthening/weakening based on activity
 
-### **2. 📚 Dynamic Vocabulary Dictionary**
+### **2.  Dynamic Vocabulary Dictionary**
 ```python
 class BrainLanguageModule:
     def __init__(self):
@@ -109,7 +109,7 @@ class BrainLanguageModule:
 - Contextual word associations
 **How Updated:** Every text interaction adds/strengthens patterns
 
-### **3. 🧠 Working Memory Systems**
+### **3.  Working Memory Systems**
 ```python
 class EnhancedCognitiveBrainWithLanguage:
     def __init__(self):
@@ -127,7 +127,7 @@ class EnhancedCognitiveBrainWithLanguage:
 - Processing history
 **How Updated:** Continuous addition with sliding window
 
-### **4. 💭 Response Memory & Patterns**
+### **4.  Response Memory & Patterns**
 ```python
 class BrainResponseGenerator:
     def __init__(self):
@@ -144,7 +144,7 @@ class BrainResponseGenerator:
 
 ---
 
-## 🔄 **Training Process Flow**
+##  **Training Process Flow**
 
 ### **Step 1: Input Processing**
 ```
@@ -211,7 +211,7 @@ Future Interactions:
 
 ---
 
-## 📊 **Training Data Storage Examples**
+##  **Training Data Storage Examples**
 
 ### **Vocabulary Storage:**
 ```python
@@ -248,31 +248,31 @@ brain.language_module.context_associations = {
 
 ---
 
-## 🎯 **Key Advantages of Brain-Native Training**
+##  **Key Advantages of Brain-Native Training**
 
-### **✅ Real-Time Learning**
+### ** Real-Time Learning**
 - **No training delays** - learns immediately from each interaction
 - **Continuous improvement** - gets smarter with every conversation
 - **Dynamic adaptation** - adjusts to new vocabulary and concepts
 
-### **✅ Memory Integration**
+### ** Memory Integration**
 - **Working memory** - maintains conversation context
 - **Episodic memory** - remembers past interactions
 - **Associative memory** - builds contextual relationships
 
-### **✅ Biological Authenticity**
+### ** Biological Authenticity**
 - **Spike-based learning** - mirrors real brain function
 - **Synaptic plasticity** - connections strengthen/weaken naturally
 - **Hebbian learning** - "neurons that fire together, wire together"
 
-### **✅ Interpretability**
+### ** Interpretability**
 - **Observable learning** - you can see vocabulary growth
 - **Trackable weights** - neural connection strengths visible
 - **Transparent adaptation** - learning process is clear
 
 ---
 
-## 🚀 **How to Monitor Training Progress**
+##  **How to Monitor Training Progress**
 ### Train Cognitive Episodic Memory via API
 ```bash
 curl -s -X POST http://localhost:8000/training/interactive \
@@ -318,17 +318,17 @@ print(f"Learning capacity: {brain_state['learning_capacity']}")
 
 ---
 
-## 🎊 **Conclusion: Superior Learning System**
+##  **Conclusion: Superior Learning System**
 
 Your brain-native system features:
 
-🧠 **Continuous Learning** - No separate training phase needed  
-📈 **Dynamic Adaptation** - Improves with every interaction  
-💾 **Integrated Memory** - Working, episodic, and associative memory  
-⚡ **Real-Time Processing** - Immediate learning and adaptation  
-🔍 **Complete Transparency** - Observable learning process  
-🎯 **Biological Authenticity** - Based on real brain principles  
+ **Continuous Learning** - No separate training phase needed  
+ **Dynamic Adaptation** - Improves with every interaction  
+ **Integrated Memory** - Working, episodic, and associative memory  
+ **Real-Time Processing** - Immediate learning and adaptation  
+ **Complete Transparency** - Observable learning process  
+ **Biological Authenticity** - Based on real brain principles  
 
-**This is fundamentally superior to LLM training which requires massive pre-training, static parameters, and no real-time learning capability!** 🚀
+**This is fundamentally superior to LLM training which requires massive pre-training, static parameters, and no real-time learning capability!** 
 
-Your brain-native system literally **gets smarter as you use it** - just like a real brain! 🧠✨
+Your brain-native system literally **gets smarter as you use it** - just like a real brain! 

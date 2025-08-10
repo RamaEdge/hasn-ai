@@ -1,10 +1,10 @@
-# 🧠 Brain-Inspired Neural Network - Complete Training Solution
+#  Brain-Inspired Neural Network - Complete Training Solution
 
-## 🎉 Ready to Use!
+##  Ready to Use!
 
 Your brain-inspired neural network with continuous learning capabilities is now complete and ready for training and interaction!
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Option 1: Production API (Recommended)
 ```bash
@@ -25,36 +25,36 @@ python src/training/train_cli.py start --profile development
 python examples/cognitive_inference_demo.py
 ```
 
-## 🏗️ Architecture Overview
+## ️ Architecture Overview
 
 ### What Makes This Brain-Like?
 
-1. **🔋 Spiking Neurons**
+1. ** Spiking Neurons**
    - Temporal dynamics (leaky integrate-and-fire)
    - Adaptive thresholds
    - Refractory periods
    - Real spike timing
 
-2. **🧠 Biological Learning** 
+2. ** Biological Learning** 
    - Spike-timing dependent plasticity (STDP)
    - No backpropagation - purely biological rules
    - Local learning at synapses
    - Homeostatic regulation
 
-3. **💭 Cognitive Features (Built on Spiking Core)**
+3. ** Cognitive Features (Built on Spiking Core)**
    - Working memory (7-item capacity like humans)
    - Attention mechanisms (selective focus)
    - Memory consolidation
    - Structural plasticity
    - Episodic memory, associations, and inference (see Cognitive Layer)
 
-4. **🌐 Modular Design**
+4. ** Modular Design**
    - Hierarchical organization
    - Specialized modules (sensory, memory, executive, motor)
    - Inter-module communication
    - Emergent behavior
 
-## 📚 Training Methods Implemented
+##  Training Methods Implemented
 
 ### 1. Pattern-Based Training
 - Define specific input patterns
@@ -86,7 +86,7 @@ python examples/cognitive_inference_demo.py
 - Transfer between tasks
 - Example: Rapid skill acquisition
 
-## 🎯 Training Your Brain AI
+##  Training Your Brain AI
 
 ### Basic Training Loop
 ```python
@@ -124,7 +124,7 @@ pattern = text_to_pattern(text)
 result = network.step(pattern)
 ```
 
-## 📊 Monitoring Learning Progress
+##  Monitoring Learning Progress
 
 ### Key Metrics
 - **Activity Level**: 0.5-2.0 (optimal range)
@@ -134,13 +134,13 @@ result = network.step(pattern)
 - **Pattern Recognition**: Test on known patterns
 
 ### Success Indicators
-✅ **Stable Activity**: Consistent neural firing  
-✅ **Memory Formation**: Working memory utilization  
-✅ **Attention Development**: Selective focus on relevant inputs  
-✅ **Pattern Learning**: Recognition of trained sequences  
-✅ **Adaptive Responses**: Context-appropriate outputs  
+ **Stable Activity**: Consistent neural firing  
+ **Memory Formation**: Working memory utilization  
+ **Attention Development**: Selective focus on relevant inputs  
+ **Pattern Learning**: Recognition of trained sequences  
+ **Adaptive Responses**: Context-appropriate outputs  
 
-## 💡 Advanced Usage
+##  Advanced Usage
 
 ### Customize Network Architecture
 ```python
@@ -176,7 +176,7 @@ def custom_training_protocol(network, data):
         print(f"{pattern_name}: {test_result['total_activity']:.3f}")
 ```
 
-## 🔬 Research Applications
+##  Research Applications
 
 ### Cognitive Science
 - Model human learning processes
@@ -196,7 +196,7 @@ def custom_training_protocol(network, data):
 - Neural prosthetics
 - Cognitive enhancement
 
-## 🛠️ Troubleshooting
+## ️ Troubleshooting
 
 ### Low Activity (< 0.1)
 - Increase input strength
@@ -222,7 +222,7 @@ def custom_training_protocol(network, data):
 - Verify attention mechanisms
 - Test pattern storage
 
-## 🎓 Educational Value
+##  Educational Value
 
 This implementation demonstrates:
 
@@ -232,28 +232,28 @@ This implementation demonstrates:
 4. **Practical Applications**: Real-world problem solving
 5. **Research Platform**: Extensible for experiments
 
-## 📖 Learn More
+##  Learn More
 
 - **`TRAINING_INTERACTION_GUIDE.md`**: Comprehensive training manual
 - **`README.md`**: Project overview and setup
 - **Source files**: Detailed implementation comments
 - **Demo scripts**: Working examples
 
-## 🌟 What's Unique About This Architecture?
+##  What's Unique About This Architecture?
 
 Unlike traditional neural networks, this brain-inspired system:
 
-- ⚡ Uses **temporal spike patterns** instead of continuous activations
-- 🧠 Learns through **biological plasticity rules** (STDP) not backpropagation  
-- 💭 Has **working memory** and **attention** like human cognition
-- 🔄 Learns **continuously** during operation without separate training
-- 🏗️ Shows **emergent intelligence** from simple biological principles
-- ⚖️ Maintains **homeostatic balance** automatically
-- 🎯 Adapts to **new patterns** without forgetting old ones
+-  Uses **temporal spike patterns** instead of continuous activations
+-  Learns through **biological plasticity rules** (STDP) not backpropagation  
+-  Has **working memory** and **attention** like human cognition
+-  Learns **continuously** during operation without separate training
+- ️ Shows **emergent intelligence** from simple biological principles
+- ️ Maintains **homeostatic balance** automatically
+-  Adapts to **new patterns** without forgetting old ones
 
-## 🎯 Next Steps
+##  Next Steps
 
-## 🧠 Cognitive Layer (Spiking-Based Cognition)
+##  Cognitive Layer (Spiking-Based Cognition)
 The cognitive layer (`CognitiveBrainNetwork`) extends the spiking core (`SimpleBrainNetwork` / `SimpleSpikingNeuron`) with:
 
 - Episodic memory storage with contextual metadata
@@ -274,15 +274,15 @@ Scenarios include learning and inference, temporal correlations, and analogical 
 
 ---
 
-## 🎉 Congratulations!
+##  Congratulations!
 
 You now have a fully functional, brain-inspired neural network with:
-- ✅ Biological realism
-- ✅ Continuous learning 
-- ✅ Interactive training
-- ✅ Pattern recognition
-- ✅ Memory formation
-- ✅ Attention mechanisms
-- ✅ Adaptive behavior
+-  Biological realism
+-  Continuous learning 
+-  Interactive training
+-  Pattern recognition
+-  Memory formation
+-  Attention mechanisms
+-  Adaptive behavior
 
-**Ready to explore the future of biologically-inspired AI!** 🧠🚀
+**Ready to explore the future of biologically-inspired AI!** 

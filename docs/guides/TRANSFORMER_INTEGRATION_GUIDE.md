@@ -54,25 +54,25 @@ class TransformerBrainAI(InteractiveBrainAI):
 ## Pros and Cons
 
 ### Current Approach (No Transformers)
-✅ **Pros:**
+ **Pros:**
 - Fast and lightweight
 - Biologically inspired
 - No external dependencies
 - Easy to understand and debug
 
-❌ **Cons:**
+ **Cons:**
 - Limited semantic understanding
 - Basic keyword matching only
 - May miss complex language nuances
 
 ### With Transformers
-✅ **Pros:**
+ **Pros:**
 - Rich semantic understanding
 - Better context awareness
 - State-of-the-art language processing
 - Handles complex queries
 
-❌ **Cons:**
+ **Cons:**
 - Increased complexity
 - Larger memory footprint
 - Slower processing

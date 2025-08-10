@@ -1,6 +1,6 @@
-# 🧠 Brain-Inspired Neural Network - Quick Start Guide
+#  Brain-Inspired Neural Network - Quick Start Guide
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Python 3.8+ 
@@ -31,27 +31,27 @@ pip install numpy networkx
 # Optional: pip install matplotlib (for visualizations)
 ```
 
-## 🎯 Running the System
+##  Running the System
 
 ### 1. Simple Brain Demo (Recommended Start)
 ```bash
 python src/demos/simple_brain_demo.py
 ```
 **What it shows:**
-- ⚡ Spiking neural dynamics
-- 🧠 Learning and adaptation
-- 🎯 Attention mechanisms
-- 💾 Working memory utilization
+-  Spiking neural dynamics
+-  Learning and adaptation
+-  Attention mechanisms
+-  Working memory utilization
 
 ### 2. Advanced Brain Network
 ```bash
 python src/core/simplified_brain_network.py
 ```
 **What it shows:**
-- 🔬 Cognitive capabilities
-- 🌱 Structural plasticity
-- 🔄 Memory consolidation
-- 📊 Multi-scale temporal processing
+-  Cognitive capabilities
+-  Structural plasticity
+-  Memory consolidation
+-  Multi-scale temporal processing
 
 ### 3. Production API and Training
 ```bash
@@ -62,7 +62,7 @@ python src/api/main.py
 python src/training/train_cli.py start --profile development
 ```
 
-## 📊 Understanding the Results
+##  Understanding the Results
 
 ### Output Files
 After running demos, check the `output/` directory:
@@ -73,22 +73,22 @@ After running demos, check the `output/` directory:
 
 ### Key Metrics to Watch
 
-**🧠 Plasticity Score (0-1):**
+** Plasticity Score (0-1):**
 - 0.7+ = Excellent synaptic adaptation
 - 0.5-0.7 = Good learning capability
 - <0.5 = Limited plasticity
 
-**🎯 Attention Stability (0-1):**
+** Attention Stability (0-1):**
 - 0.9+ = Highly stable selective processing
 - 0.7-0.9 = Good attention control
 - <0.7 = Dynamic/unstable attention
 
-**💾 Memory Usage:**
+** Memory Usage:**
 - 7/7 = Full working memory utilization
 - 5-6 = Good memory engagement
 - <5 = Underutilized memory capacity
 
-## 🔧 Customization
+##  Customization
 
 ### Modify Network Architecture
 ```python
@@ -115,7 +115,7 @@ def custom_input_pattern(step):
     return {}
 ```
 
-## 🧪 Experimental Modifications
+##  Experimental Modifications
 
 ### 1. Test Different Timescales
 ```python
@@ -138,7 +138,7 @@ memory_capacity = 10       # Increase from default 7
 decay_rate = 0.005        # Slower forgetting
 ```
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 
@@ -167,7 +167,7 @@ num_steps = 2000     # Increase from 1000
 # Increase input strength or pattern complexity
 ```
 
-## 📚 Learn More
+##  Learn More
 
 ### Key Files to Explore
 1. **`src/core/simplified_brain_network.py`** - Spiking core
@@ -183,16 +183,16 @@ num_steps = 2000     # Increase from 1000
 - **Homeostasis**: Activity regulation mechanisms
 - **Working Memory**: Capacity-limited storage system
 
-## 🎉 Success Indicators
+##  Success Indicators
 
 You'll know it's working when you see:
-- ✅ Neurons spiking in response to inputs
-- ✅ Synaptic weights changing over time
-- ✅ Attention focusing on active modules
-- ✅ Working memory filling up during activity
-- ✅ Network adapting to input patterns
+-  Neurons spiking in response to inputs
+-  Synaptic weights changing over time
+-  Attention focusing on active modules
+-  Working memory filling up during activity
+-  Network adapting to input patterns
 
-## 🚀 Next Steps
+##  Next Steps
 
 1. **Understand the basics** with simple demo
 2. **Explore parameters** by modifying values
@@ -202,4 +202,4 @@ You'll know it's working when you see:
 
 ---
 
-*Happy experimenting with brain-inspired AI! 🧠✨*
+*Happy experimenting with brain-inspired AI! *
