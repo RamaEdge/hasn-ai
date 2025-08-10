@@ -2,15 +2,14 @@ name: Docker Build, Scan, and Push
 
 on:
   push:
-    branches: [ main ]
-    tags: [ 'v*.*.*' ]
+    branches: [ '**' ]
   pull_request:
     branches: [ '**' ]
   workflow_dispatch: {}
 
 jobs:
-  pr-validate:
-    if: github.event_name == 'pull_request'
+  validate:
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref != 'refs/heads/main')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -19,20 +18,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Compute image vars (lowercase repo, dynamic tag)
+        id: vars
+        shell: bash
+        run: |
+          echo "repo=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+          tag="branch-${GITHUB_SHA}"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then tag="pr-${GITHUB_SHA}"; fi
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "image=ghcr.io/${GITHUB_REPOSITORY,,}:$tag" >> $GITHUB_OUTPUT
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build (PR) amd64 image (no push)
+      - name: Build (validate) amd64 image (no push)
         uses: docker/build-push-action@v5
         with:
           context: .
           platforms: linux/amd64
           load: true
           push: false
-          tags: ghcr.io/${{ github.repository }}:pr-${{ github.sha }}
+          tags: ${{ steps.vars.outputs.image }}
 
       - name: Trivy FS scan (repo)
         uses: aquasecurity/trivy-action@0.20.0
@@ -48,10 +57,10 @@ jobs:
         with:
           sarif_file: trivy-fs.sarif
 
-      - name: Trivy Image scan (PR image)
+      - name: Trivy Image scan (validate image)
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: ghcr.io/${{ github.repository }}:pr-${{ github.sha }}
+          image-ref: ${{ steps.vars.outputs.image }}
           ignore-unfixed: true
           format: sarif
           output: trivy-image.sarif
@@ -63,6 +72,7 @@ jobs:
           sarif_file: trivy-image.sarif
 
   build-push:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -72,6 +82,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Compute image repo (lowercase)
+        id: vars
+        run: echo "repo=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -90,11 +104,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ghcr.io/${{ steps.vars.outputs.repo }}
           tags: |
             type=ref,event=branch
-            type=ref,event=tag
-            type=sha
+            type=sha,format=long
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -122,7 +135,7 @@ jobs:
       - name: Trivy Image scan (pushed image)
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: ghcr.io/${{ github.repository }}:sha-${{ github.sha }}
+          image-ref: ghcr.io/${{ steps.vars.outputs.repo }}:sha-${{ github.sha }}
           ignore-unfixed: true
           format: sarif
           output: trivy-image.sarif
