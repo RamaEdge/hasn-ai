@@ -3,8 +3,18 @@ name: Docker Build, Scan, and Push
 on:
   push:
     branches: [ '**' ]
+    paths:
+      - 'src/**'
+      - 'examples/**'
+      - 'tests/**'
+      - 'Dockerfile'
   pull_request:
     branches: [ '**' ]
+    paths:
+      - 'src/**'
+      - 'examples/**'
+      - 'tests/**'
+      - 'Dockerfile'
   workflow_dispatch: {}
 
 jobs:
