@@ -14,7 +14,7 @@ HASN-AI implements a **Hierarchical Adaptive Spiking Network (HASN)** - a revolu
 - **Working Memory**: Integrated memory systems with natural capacity limits
 - **Attention Mechanisms**: Selective information processing
 
-### Complete Brain Portability** *(Revolutionary Feature
+### Complete Brain Portability (Revolutionary Feature)
 
 - **Save/Load Trained State**: Complete neural state preservation in JSON format
 - **Cross-Platform Compatible**: Move trained brains between systems
