@@ -71,13 +71,13 @@ if len(stored_pattern) == len(pattern):  # Same size
 
 ## Testing Results
 
-✅ **Fixed Version:** Runs successfully without errors
+ **Fixed Version:** Runs successfully without errors
 - No array comparison errors
 - Proper cognitive processing simulation
 - Meaningful output with brain wave oscillations
 - Working memory and attention mechanisms functional
 
-✅ **Working Demo:** Alternative simplified version available
+ **Working Demo:** Alternative simplified version available
 - Clear, interpretable outputs
 - Realistic brain-like processing
 - Easy to understand cognitive states
