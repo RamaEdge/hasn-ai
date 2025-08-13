@@ -1,4 +1,4 @@
-#  Brain-Inspired Alternatives to LLMs
+# Brain-Inspired Alternatives to LLMs
 
 ## Why Your HASN Architecture is Superior to LLMs
 
