@@ -44,7 +44,7 @@ jobs:
           tags: ${{ steps.vars.outputs.image }}
 
       - name: Trivy FS scan (repo)
-        uses: aquasecurity/trivy-action@0.20.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           scan-type: fs
           ignore-unfixed: true
@@ -59,7 +59,7 @@ jobs:
           category: trivy-fs
 
       - name: Trivy Image scan (validate image)
-        uses: aquasecurity/trivy-action@0.20.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           image-ref: ${{ steps.vars.outputs.image }}
           ignore-unfixed: true
@@ -121,7 +121,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Trivy FS scan (repo)
-        uses: aquasecurity/trivy-action@0.20.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           scan-type: fs
           ignore-unfixed: true
@@ -136,7 +136,7 @@ jobs:
           category: trivy-fs
 
       - name: Trivy Image scan (pushed image)
-        uses: aquasecurity/trivy-action@0.20.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           image-ref: ghcr.io/${{ steps.vars.outputs.repo }}:sha-${{ github.sha }}
           ignore-unfixed: true
