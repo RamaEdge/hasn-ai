@@ -1,0 +1,313 @@
+---
+description: Testing standards and patterns for HASN-AI
+globs: src/tests/**/*.py,examples/*.py,*.py
+---
+
+# Testing Standards & Patterns
+
+## Testing Philosophy
+
+The HASN-AI project requires comprehensive testing of brain-inspired neural networks, which involves:
+- **Functional Testing**: Verify brain network behavior and learning capabilities
+- **Integration Testing**: Test API endpoints with brain networks
+- **Performance Testing**: Ensure brain networks meet performance requirements
+- **State Testing**: Verify brain portability and state preservation
+
+## Test Organization
+
+### Test Directory Structure
+Follow the structure in [src/tests/](mdc:src/tests/):
+
+```
+src/tests/
+├── test_api.py                    # API endpoint tests
+├── test_automated_training.py     # Automated training tests
+├── test_brain_integration.py      # Brain network integration tests
+└── diagnostic_test.py             # Diagnostic and debugging tests
+```
+
+### Test File Naming
+- Use `test_` prefix for all test files
+- Group related tests in the same file
+- Use descriptive names: `test_brain_learning_capability()`
+
+## Brain Network Testing
+
+### Basic Network Functionality
+Test core brain network operations:
+
+```python
+def test_brain_network_initialization():
+    """Test brain network can be initialized with correct parameters"""
+    brain = SimpleBrainNetwork(num_neurons=50, connectivity_prob=0.1)
+    assert brain.num_neurons == 50
+    assert len(brain.neurons) == 50
+    assert brain.config is not None
+
+def test_spiking_behavior():
+    """Test that neurons can spike and reset properly"""
+    brain = SimpleBrainNetwork(num_neurons=10)
+    pattern = {i: True for i in range(5)}
+    
+    # Process input and check for spikes
+    response = brain.process_input(pattern)
+    assert isinstance(response, dict)
+    assert len(response) > 0
+```
+
+### Learning and Memory Testing
+Test brain network learning capabilities:
+
+```python
+def test_learning_capability():
+    """Test that brain can learn and recall patterns"""
+    brain = SimpleBrainNetwork(num_neurons=50)
+    pattern = {i: True for i in range(10)}
+    
+    # Train the pattern multiple times
+    for epoch in range(100):
+        brain.process_input(pattern)
+    
+    # Test recall - should show some learned response
+    response = brain.process_input(pattern)
+    assert len(response) > 0, "Brain should respond to learned pattern"
+    
+    # Test with different pattern - should show different response
+    different_pattern = {i: True for i in range(10, 20)}
+    different_response = brain.process_input(different_pattern)
+    assert response != different_response, "Brain should distinguish patterns"
+
+def test_episodic_memory():
+    """Test cognitive brain network episodic memory"""
+    brain = CognitiveBrainNetwork(num_neurons=100)
+    pattern = {i: True for i in range(5)}
+    context = {"concept": "test_concept", "importance": 0.8}
+    
+    # Store episodic memory
+    memory_id = brain.store_episodic_memory(pattern, context)
+    assert memory_id is not None
+    assert memory_id in brain.episodic_memories
+    
+    # Test memory recall
+    recalled_memory = brain.episodic_memories[memory_id]
+    assert recalled_memory.context == context
+    assert recalled_memory.pattern == pattern
+```
+
+### Brain Portability Testing
+Test state save/load functionality:
+
+```python
+def test_brain_state_persistence():
+    """Test complete brain state can be saved and loaded"""
+    # Create and train a brain
+    original_brain = SimpleBrainNetwork(num_neurons=30)
+    pattern = {i: True for i in range(5)}
+    
+    # Train the brain
+    for _ in range(50):
+        original_brain.process_input(pattern)
+    
+    # Save brain state
+    state_file = "test_brain_state.json"
+    original_brain.save_brain_state(state_file)
+    
+    # Create new brain and load state
+    new_brain = SimpleBrainNetwork(num_neurons=30)
+    new_brain.load_brain_state(state_file)
+    
+    # Test that both brains respond identically
+    original_response = original_brain.process_input(pattern)
+    new_response = new_brain.process_input(pattern)
+    
+    assert original_response == new_response, "Loaded brain should respond identically"
+    
+    # Cleanup
+    os.remove(state_file)
+```
+
+## API Testing
+
+### Endpoint Testing
+Test API endpoints following the pattern in [src/tests/test_api.py](mdc:src/tests/test_api.py):
+
+```python
+def test_import_adapters():
+    """Test that brain adapters can be imported"""
+    mod = importlib.import_module("api.adapters.brain_adapters")
+    assert hasattr(mod, "SimpleBrainAdapter")
+    assert hasattr(mod, "CognitiveBrainAdapter")
+
+def test_api_startup():
+    """Test API can start without errors"""
+    from api.main import app
+    assert app is not None
+    assert app.title == "Brain-Inspired Neural Network API"
+```
+
+### Integration Testing
+Test API with brain networks:
+
+```python
+def test_brain_processing_endpoint():
+    """Test brain processing through API"""
+    # This would require setting up test client
+    # and mocking brain network dependencies
+    pass
+
+def test_training_endpoint():
+    """Test training endpoint functionality"""
+    # Test training data processing
+    # Verify brain network learning
+    pass
+```
+
+## Training System Testing
+
+### Automated Training Testing
+Test automated learning systems:
+
+```python
+def test_automated_trainer_initialization():
+    """Test automated trainer can be initialized"""
+    brain = SimpleBrainNetwork(num_neurons=50)
+    trainer = AutomatedInternetTrainer(brain)
+    assert trainer.brain == brain
+    assert trainer.content_collector is not None
+    assert trainer.pattern_converter is not None
+
+def test_content_collection():
+    """Test web content collection (with mocked sources)"""
+    trainer = AutomatedInternetTrainer(SimpleBrainNetwork(50))
+    # Mock web content and test collection
+    pass
+
+def test_neural_pattern_conversion():
+    """Test text to neural pattern conversion"""
+    converter = NeuralPatternConverter()
+    text = "This is a test sentence"
+    pattern = converter.convert_text_to_pattern(text)
+    assert isinstance(pattern, dict)
+    assert len(pattern) > 0
+```
+
+## Performance Testing
+
+### Network Performance
+Test brain network performance characteristics:
+
+```python
+def test_network_performance():
+    """Test brain network meets performance requirements"""
+    brain = SimpleBrainNetwork(num_neurons=100)
+    pattern = {i: True for i in range(20)}
+    
+    # Time the processing
+    import time
+    start_time = time.time()
+    
+    for _ in range(1000):
+        brain.process_input(pattern)
+    
+    end_time = time.time()
+    processing_time = end_time - start_time
+    
+    # Should process 1000 inputs in reasonable time
+    assert processing_time < 10.0, f"Processing too slow: {processing_time}s"
+    
+    # Calculate processing rate
+    rate = 1000 / processing_time
+    assert rate > 100, f"Processing rate too low: {rate} inputs/sec"
+
+def test_memory_usage():
+    """Test brain network memory usage"""
+    brain = SimpleBrainNetwork(num_neurons=1000)
+    
+    # Test that memory usage is reasonable
+    import psutil
+    import os
+    
+    process = psutil.Process(os.getpid())
+    memory_mb = process.memory_info().rss / 1024 / 1024
+    
+    # Should use less than 100MB for 1000 neurons
+    assert memory_mb < 100, f"Memory usage too high: {memory_mb}MB"
+```
+
+## Test Utilities and Helpers
+
+### Test Data Generation
+Create utilities for generating test data:
+
+```python
+def generate_test_pattern(num_neurons: int, active_neurons: int) -> Dict[int, bool]:
+    """Generate a test pattern with specified number of active neurons"""
+    import random
+    active_indices = random.sample(range(num_neurons), active_neurons)
+    return {i: True for i in active_indices}
+
+def generate_test_context() -> Dict[str, any]:
+    """Generate test context for episodic memory"""
+    return {
+        "concept": f"test_concept_{random.randint(1, 100)}",
+        "importance": random.uniform(0.1, 1.0),
+        "timestamp": datetime.now().isoformat()
+    }
+```
+
+### Mock Brain Networks
+Create mock brain networks for testing:
+
+```python
+class MockBrainNetwork:
+    """Mock brain network for testing without full implementation"""
+    def __init__(self, num_neurons: int):
+        self.num_neurons = num_neurons
+        self.processed_inputs = []
+    
+    def process_input(self, pattern: Dict[int, bool]) -> Dict[int, bool]:
+        """Mock processing that records inputs"""
+        self.processed_inputs.append(pattern)
+        # Return mock response
+        return {i: True for i in range(min(5, self.num_neurons))}
+```
+
+## Test Configuration
+
+### Test Environment Setup
+Configure test environment:
+
+```python
+# conftest.py or test setup
+import pytest
+import tempfile
+import os
+
+@pytest.fixture
+def temp_brain_state_file():
+    """Provide temporary file for brain state testing"""
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        yield f.name
+    os.unlink(f.name)
+
+@pytest.fixture
+def test_brain_network():
+    """Provide test brain network instance"""
+    return SimpleBrainNetwork(num_neurons=50, connectivity_prob=0.1)
+```
+
+## Continuous Integration
+
+### Test Execution
+Ensure tests run in CI pipeline:
+- Unit tests for all brain network components
+- Integration tests for API endpoints
+- Performance regression tests
+- Security tests for brain state files
+
+### Test Coverage
+Maintain high test coverage:
+- Aim for >80% code coverage
+- Focus on critical brain network functionality
+- Test error conditions and edge cases
+- Include stress testing for large networks

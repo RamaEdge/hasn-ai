@@ -1,0 +1,280 @@
+---
+description: FastAPI development guidelines and patterns for HASN-AI
+globs: src/api/**/*.py
+---
+
+# FastAPI Development Guidelines
+
+## API Architecture
+
+### Main Application Structure
+Follow the pattern in [src/api/main.py](mdc:src/api/main.py):
+
+```python
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+app = FastAPI(
+    title="Brain-Inspired Neural Network API",
+    description="Production API for Hierarchical Adaptive Spiking Network (HASN)",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
+```
+
+### Dependency Injection Pattern
+Use FastAPI's dependency system for brain network access:
+
+```python
+# Global brain instances
+basic_brain: SimpleBrainAdapter | None = None
+advanced_brain: CognitiveBrainAdapter | None = None
+
+def get_brain_network():
+    if basic_brain is None:
+        raise HTTPException(status_code=503, detail="Brain network not initialized")
+    return basic_brain
+
+# Wire dependencies for route modules
+app.dependency_overrides[brain.get_brain_network] = get_brain_network
+```
+
+## Route Organization
+
+### Modular Route Structure
+Organize routes by functionality in [src/api/routes/](mdc:src/api/routes/):
+
+- **health.py**: Health check endpoints
+- **brain.py**: Brain processing endpoints  
+- **training.py**: Training and learning endpoints
+- **automated_training.py**: Automated learning endpoints
+
+### Route Implementation Pattern
+```python
+from fastapi import APIRouter, Depends, HTTPException
+from api.adapters.brain_adapters import SimpleBrainAdapter
+
+router = APIRouter()
+
+@router.post("/process")
+async def process_input(
+    request: ProcessRequest,
+    brain: SimpleBrainAdapter = Depends(get_brain_network)
+):
+    """Process input through brain network"""
+    try:
+        result = brain.process_input(request.input_data)
+        return APIResponse(success=True, data=result)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+```
+
+## Adapter Pattern
+
+### Brain Network Adapters
+Use adapters to interface between API and brain networks in [src/api/adapters/brain_adapters.py](mdc:src/api/adapters/brain_adapters.py):
+
+```python
+class SimpleBrainAdapter:
+    def __init__(self, brain_network: SimpleBrainNetwork):
+        self.brain = brain_network
+    
+    def process_input(self, input_data: Dict) -> Dict:
+        """Convert API input to brain format and return results"""
+        pattern = self._convert_to_pattern(input_data)
+        response = self.brain.process_input(pattern)
+        return self._convert_to_response(response)
+```
+
+## Middleware Configuration
+
+### CORS and Rate Limiting
+Configure middleware in [src/api/main.py](mdc:src/api/main.py):
+
+```python
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure for production
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"],
+)
+
+# Rate limiting middleware
+app.add_middleware(RateLimitMiddleware, calls=100, period=60)
+```
+
+### Custom Middleware
+Implement custom middleware in [src/api/middleware/](mdc:src/api/middleware/):
+
+```python
+class RateLimitMiddleware:
+    def __init__(self, app, calls: int, period: int):
+        self.app = app
+        self.calls = calls
+        self.period = period
+        self.requests = defaultdict(list)
+    
+    async def __call__(self, scope, receive, send):
+        # Rate limiting logic
+        pass
+```
+
+## Response Models
+
+### Standardized Response Format
+Use consistent response models:
+
+```python
+@dataclass
+class APIResponse:
+    success: bool
+    message: str = ""
+    data: Optional[Dict] = None
+    timestamp: str = ""
+
+@dataclass  
+class ErrorResponse:
+    success: bool = False
+    error: str = ""
+    detail: str = ""
+```
+
+## Error Handling
+
+### Global Exception Handler
+Implement comprehensive error handling:
+
+```python
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    """Global exception handler"""
+    logger.error(f"Global exception: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content=ErrorResponse(
+            success=False,
+            error="Internal server error",
+            detail=str(exc) if app.debug else "An unexpected error occurred",
+        ).dict(),
+    )
+```
+
+### Route-Level Error Handling
+```python
+@router.post("/train")
+async def train_brain(request: TrainingRequest):
+    try:
+        # Training logic
+        result = brain.train(request.data)
+        return APIResponse(success=True, data=result)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Training error: {e}")
+        raise HTTPException(status_code=500, detail="Training failed")
+```
+
+## Startup and Shutdown
+
+### Application Lifecycle
+Handle brain network initialization:
+
+```python
+@app.on_event("startup")
+async def startup_event():
+    """Initialize brain networks on startup"""
+    global basic_brain, advanced_brain
+    
+    try:
+        logger.info("🧠 Initializing Brain Networks...")
+        
+        # Initialize basic brain
+        simple = SimpleBrainNetwork(num_neurons=100, connectivity_prob=0.05)
+        basic_brain = SimpleBrainAdapter(simple)
+        logger.info("✅ SimpleBrainNetwork initialized")
+        
+        # Initialize advanced brain
+        cognitive_cfg = CognitiveConfig(max_episodic_memories=200)
+        cognitive = CognitiveBrainNetwork(num_neurons=150, config=cognitive_cfg)
+        advanced_brain = CognitiveBrainAdapter(cognitive)
+        logger.info("✅ CognitiveBrainNetwork initialized")
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize brain networks: {e}")
+        raise
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup on shutdown"""
+    logger.info("🛑 Shutting down Brain API...")
+    # Add cleanup logic here if needed
+```
+
+## Logging Standards
+
+### Structured Logging
+Use consistent logging patterns:
+
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
+# Use emoji indicators
+logger.info("🧠 Brain network processing request")
+logger.warning("⚠️ Rate limit approaching")
+logger.error("❌ Brain network initialization failed")
+```
+
+## Testing API Endpoints
+
+### Test Structure
+Follow the pattern in [src/tests/test_api.py](mdc:src/tests/test_api.py):
+
+```python
+def test_import_adapters():
+    """Test that adapters can be imported"""
+    mod = importlib.import_module("api.adapters.brain_adapters")
+    assert hasattr(mod, "SimpleBrainAdapter")
+    assert hasattr(mod, "CognitiveBrainAdapter")
+
+def test_api_startup():
+    """Test API can start without errors"""
+    from api.main import app
+    assert app is not None
+```
+
+## Production Considerations
+
+### Health Checks
+Implement comprehensive health endpoints:
+
+```python
+@router.get("/health")
+async def health_check():
+    """Comprehensive health check"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "brain_networks": {
+            "basic": basic_brain is not None,
+            "advanced": advanced_brain is not None
+        }
+    }
+```
+
+### Configuration Management
+- Use environment variables for configuration
+- Implement proper secret management
+- Configure CORS origins for production
+- Set up proper logging levels

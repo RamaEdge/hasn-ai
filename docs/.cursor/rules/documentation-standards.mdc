@@ -1,0 +1,359 @@
+---
+description: Documentation standards and guidelines for HASN-AI
+globs: docs/**/*.md,*.md,README.md
+---
+
+# Documentation Standards
+
+## Documentation Philosophy
+
+The HASN-AI project requires comprehensive documentation due to its revolutionary nature. Documentation should:
+- **Explain the Science**: Help readers understand brain-inspired AI concepts
+- **Provide Clear Examples**: Show how to use the system effectively
+- **Include Performance Data**: Demonstrate the system's capabilities
+- **Guide Implementation**: Help developers understand the architecture
+
+## Documentation Structure
+
+### Main Documentation
+Follow the structure in [docs/](mdc:docs/):
+
+```
+docs/
+├── README.md                           # Main project overview
+├── INDEX.md                           # Documentation index
+├── analysis/                          # Performance analysis
+├── architecture/                      # Technical architecture
+├── deployment/                        # Deployment guides
+├── guides/                           # User guides
+├── portability/                      # Brain portability docs
+└── research/                         # Research foundation
+```
+
+### Key Documentation Files
+- **[README.md](mdc:README.md)**: Main project overview with quick start
+- **[docs/README.md](mdc:docs/README.md)**: Detailed technical overview
+- **[docs/INDEX.md](mdc:docs/INDEX.md)**: Complete documentation index
+
+## Documentation Standards
+
+### Markdown Formatting
+Use consistent markdown formatting:
+
+```markdown
+# Main Title
+## Section Title
+### Subsection Title
+
+**Bold text** for emphasis
+*Italic text* for highlights
+`code snippets` for technical terms
+
+```python
+# Code blocks with syntax highlighting
+def example_function():
+    return "Hello, World!"
+```
+
+### Emoji Usage
+
+Do not use Emoji's.
+
+### Code Examples
+
+Always include working code examples:
+
+```python
+# Example: Basic brain network usage
+from src.core.simplified_brain_network import SimpleBrainNetwork
+
+# Initialize brain network
+brain = SimpleBrainNetwork(num_neurons=100, connectivity_prob=0.1)
+
+# Process input pattern
+pattern = {i: True for i in range(10)}
+response = brain.process_input(pattern)
+
+print(f"🧠 Brain processed input, got {len(response)} responses")
+```
+
+## Technical Documentation
+
+### Architecture Documentation
+Document the system architecture clearly:
+
+```markdown
+## System Architecture
+
+```
+Internet Sources → Web Content Collector → Quality Assessment
+                                                ↓
+Brain State Storage ← HASN Brain Network ← Neural Pattern Converter
+        ↓                    ↓
+    JSON Files          Memory Systems → Attention & Working Memory
+                             ↓
+                    Production APIs → Health Monitoring
+```
+```
+
+### API Documentation
+Document API endpoints with examples:
+
+```markdown
+### POST /brain/process
+
+Process input through the brain network.
+
+**Request:**
+```json
+{
+  "input_data": {
+    "pattern": {"0": true, "1": false, "2": true},
+    "context": {"concept": "test"}
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "response": {"5": true, "7": true, "12": false},
+    "confidence": 0.85
+  }
+}
+```
+```
+
+## Performance Documentation
+
+### Include Performance Metrics
+Always include performance data:
+
+```markdown
+## Performance Results
+
+Our live demonstration achieved:
+
+- **Perfect plasticity score** (1.0/1.0)
+- **Excellent adaptation** (1.0/1.0) 
+- **Stable attention** (99.9% stability)
+- **Full memory utilization** (7/7 capacity)
+- **2.3x faster** than alternative implementations
+- **1000x more efficient** than traditional neural networks
+```
+
+### Comparison Tables
+Use tables to compare with alternatives:
+
+```markdown
+| Feature | Traditional Neural Networks | HASN-AI |
+|---------|----------------------------|---------|
+| **Learning** | Requires full retraining | Real-time continuous learning |
+| **State Persistence** | Cannot save/load trained state | Complete brain portability |
+| **Energy Efficiency** | High computational cost | 1000x more efficient (event-driven) |
+| **Interpretability** | Black box decisions | Full neural activity observability |
+```
+
+## User Guides
+
+### Quick Start Guides
+Provide clear quick start instructions:
+
+```markdown
+## Quick Start
+
+### Basic Demo
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run basic brain demo
+python src/demos/simple_brain_demo.py
+```
+
+### Start Production API
+```bash
+# Launch production API server
+python src/api/main.py
+
+# Visit http://localhost:8000/docs for interactive API documentation
+```
+```
+
+### Step-by-Step Instructions
+Break down complex procedures:
+
+```markdown
+### Automated Training Setup
+
+1. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Setup Automated Training**
+   ```bash
+   python setup_automated_training.py
+   ```
+
+3. **Start Continuous Learning**
+   ```bash
+   python src/training/train_cli.py start --profile production --continuous
+   ```
+
+4. **Monitor Progress**
+   ```bash
+   python src/training/train_cli.py monitor
+   ```
+```
+
+## Research Documentation
+
+### Scientific Background
+Include research foundation:
+
+```markdown
+## Research Foundation
+
+### Spike-Timing Dependent Plasticity (STDP)
+
+```python
+# Revolutionary learning rule based on timing
+if pre_spike_time < post_spike_time:
+    weight += learning_rate * exp(-(dt)/tau)  # Strengthen
+else:
+    weight -= learning_rate * exp(dt/tau)     # Weaken
+```
+
+### Working Memory Implementation
+
+```python
+# Brain-like memory with natural capacity limits
+class WorkingMemoryBuffer:
+    capacity = 7  # Miller's magic number
+    decay_rate = 0.01  # Temporal forgetting
+```
+```
+
+## Code Documentation
+
+### Inline Documentation
+Use comprehensive docstrings:
+
+```python
+class SimpleBrainNetwork:
+    """
+    Simplified brain-inspired network with direct neuron-to-neuron connections.
+    
+    This implementation focuses on core spiking dynamics with minimal complexity:
+    - Reduced neuron parameters (3 instead of 9)
+    - Simplified plasticity (basic Hebbian learning)
+    - Direct network structure (no modules)
+    - Essential functionality only
+    
+    Performance: 2.3x faster than alternative implementations while maintaining
+    all essential brain-inspired functionality.
+    
+    Args:
+        num_neurons (int): Number of neurons in the network
+        connectivity_prob (float): Probability of connection between neurons
+        config (NetworkConfig, optional): Network configuration parameters
+    """
+```
+
+### Function Documentation
+Document all public functions:
+
+```python
+def process_input(self, input_pattern: Dict[int, bool]) -> Dict[int, bool]:
+    """
+    Process input pattern through the brain network.
+    
+    This method simulates one timestep of brain network processing:
+    1. Apply input spikes to connected neurons
+    2. Update membrane potentials
+    3. Check for spike generation
+    4. Apply learning rules
+    5. Return output spikes
+    
+    Args:
+        input_pattern (Dict[int, bool]): Input spikes keyed by neuron ID
+        
+    Returns:
+        Dict[int, bool]: Output spikes from the network
+        
+    Example:
+        >>> brain = SimpleBrainNetwork(100)
+        >>> pattern = {0: True, 1: False, 2: True}
+        >>> response = brain.process_input(pattern)
+        >>> print(f"Got {len(response)} output spikes")
+    """
+```
+
+## README Standards
+
+### Project README Structure
+Follow the structure in [README.md](mdc:README.md):
+
+```markdown
+# Project Title
+
+**Brief description of what makes this revolutionary**
+
+## What Makes This Revolutionary
+
+### Key Innovation 1
+- Feature description
+- Technical details
+- Performance benefits
+
+### Key Innovation 2
+- Feature description
+- Technical details
+- Performance benefits
+
+## Quick Start
+
+### Basic Demo
+```bash
+# Commands here
+```
+
+### Production Setup
+```bash
+# Commands here
+```
+
+## Key Achievements
+
+- **Metric 1**: Value and description
+- **Metric 2**: Value and description
+- **Metric 3**: Value and description
+
+## Documentation
+
+- **[Link 1](path)**: Description
+- **[Link 2](path)**: Description
+- **[Link 3](path)**: Description
+```
+
+## Documentation Maintenance
+
+### Keep Documentation Current
+- Update documentation with code changes
+- Include new features and capabilities
+- Update performance metrics regularly
+- Maintain working code examples
+
+### Review Process
+- Technical accuracy review
+- Code example testing
+- Link validation
+- Grammar and clarity review
+
+### Version Control
+- Track documentation changes
+- Include documentation in pull requests
+- Maintain changelog for major updates
