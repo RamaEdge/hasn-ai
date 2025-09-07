@@ -20,8 +20,8 @@ matplotlib>=3.5.0
 networkx>=2.6.0
 
 # Database and storage
-sqlalchemy==2.0.42
-alembic==1.16.4
+sqlalchemy==2.0.43
+alembic==1.16.5
 redis==6.4.0
 
 # Monitoring and metrics
@@ -31,12 +31,12 @@ psutil==7.0.0
 # HTTP and networking
 aiofiles==24.1.0
 httpx==0.28.1
-requests==2.32.4
+requests==2.32.5
 aiohttp==3.12.15
 
 # Automated training dependencies
-beautifulsoup4==4.13.4
-lxml==6.0.0
+beautifulsoup4==4.13.5
+lxml==6.0.1
 
 # For development and testing
 pytest>=6.0.0
