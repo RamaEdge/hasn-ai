@@ -9,16 +9,38 @@ from typing import Any, Dict
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 
-from api.models.requests import (
-    BatchProcessingRequest,
-    BrainSimulationRequest,
-    NeuralPatternRequest,
-    TextToPatternRequest,
-)
-from api.models.responses import APIResponse, BrainProcessResponse
+from pydantic import BaseModel
+from typing import Dict, Any, List
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+# Simple request/response models
+class NeuralPatternRequest(BaseModel):
+    pattern: Dict[str, Dict[str, bool]]
+
+class TextToPatternRequest(BaseModel):
+    text: str
+    encoding_method: str = "character_frequency"
+
+class BrainSimulationRequest(BaseModel):
+    input_data: Dict[str, Any]
+    simulation_steps: int = 10
+
+class BatchProcessingRequest(BaseModel):
+    inputs: List[Dict[str, Any]]
+
+class APIResponse(BaseModel):
+    success: bool
+    message: str = ""
+    data: Dict[str, Any] = {}
+    processing_time: float = 0.0
+
+class BrainProcessResponse(BaseModel):
+    success: bool
+    output_pattern: Dict[str, bool]
+    processing_time: float
+    metadata: Dict[str, Any] = {}
 
 
 # This will be injected from main.py

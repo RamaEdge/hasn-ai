@@ -8,11 +8,38 @@ from typing import Any, Dict
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from api.models.requests import ChatRequest, ModelConfigRequest, TrainingRequest
-from api.models.responses import APIResponse, ChatResponse, TrainingResponse
+from pydantic import BaseModel
+from typing import Dict, Any, Optional
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+# Simple request/response models
+class TrainingRequest(BaseModel):
+    data: Dict[str, Any]
+    epochs: int = 10
+
+class ChatRequest(BaseModel):
+    message: str
+    context: Optional[Dict[str, Any]] = None
+
+class ModelConfigRequest(BaseModel):
+    config: Dict[str, Any]
+
+class APIResponse(BaseModel):
+    success: bool
+    message: str = ""
+    data: Dict[str, Any] = {}
+
+class ChatResponse(BaseModel):
+    success: bool
+    response: str
+    confidence: Optional[float] = None
+
+class TrainingResponse(BaseModel):
+    success: bool
+    epochs_completed: int
+    final_accuracy: float
 
 
 def get_brain_network():

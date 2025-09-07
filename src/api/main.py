@@ -44,7 +44,19 @@ except ImportError:
 
 from api.adapters.brain_adapters import CognitiveBrainAdapter, SimpleBrainAdapter
 from api.middleware.rate_limit import RateLimitMiddleware
-from api.models.responses import APIResponse, ErrorResponse
+from pydantic import BaseModel
+from typing import Dict, Any
+
+# Simple response models
+class APIResponse(BaseModel):
+    success: bool
+    message: str = ""
+    data: Dict[str, Any] = {}
+
+class ErrorResponse(BaseModel):
+    success: bool = False
+    error: str = ""
+    detail: str = ""
 
 # Configure logging
 logging.basicConfig(
