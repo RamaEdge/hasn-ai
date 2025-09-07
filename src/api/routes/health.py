@@ -8,9 +8,18 @@ from datetime import datetime, timedelta
 import psutil
 from fastapi import APIRouter
 
-from api.models.responses import HealthResponse
+from pydantic import BaseModel
+from typing import Dict, Any
 
 router = APIRouter()
+
+# Simple response model
+class HealthResponse(BaseModel):
+    status: str
+    timestamp: str
+    uptime_seconds: float
+    brain_networks: Dict[str, bool]
+    system_info: Dict[str, Any]
 
 # Track startup time for uptime calculation
 startup_time = time.time()
