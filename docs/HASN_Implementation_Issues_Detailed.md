@@ -249,3 +249,91 @@ Each section below is a detailed issue plan ready to paste into Linear.
 - Full fuzz testing.
 
 ---
+
+
+---
+
+# 🚀 New Production-Readiness Issues (Appended on 2025-09-07)
+
+### PR1) Stability & Learning Safeguards
+**Context**: Ensure bounded dynamics and prevent runaway plasticity.  
+**Tasks**:
+- Implement `src/common/stability.py` with leak, refractory, caps on V_mem and weights.  
+- Add homeostatic normalization triggered each consolidation window.  
+- Gating STDP/Hebbian updates with eligibility traces and capped updates per interval.  
+**Deliverables**:
+- 24h soak test shows bounded histograms, no divergence.  
+**Labels**: `production`, `stability`  
+
+---
+
+### PR2) Determinism & Golden Master Testing
+**Context**: Guarantee reproducibility across environments.  
+**Tasks**:
+- Implement `src/common/rng.py` to seed Python, NumPy, Torch.  
+- Add `tests/golden/` with canonical input → spike raster + weight-delta checksum.  
+- CI to fail on nondeterministic outputs.  
+**Deliverables**:
+- Golden master test passes bit-exactly on CI.  
+**Labels**: `production`, `testing`, `determinism`  
+
+---
+
+### PR3) Performance CI & Targets
+**Context**: Prevent regressions and set throughput baselines.  
+**Tasks**:
+- Create perf microbench harness.  
+- Add CI job to measure latency/throughput on each PR.  
+- Block merge if P95 > 10ms (CPU) or 2ms (GPU), or throughput < 1e6 spikes/s/core.  
+**Deliverables**:
+- Perf CI green on main branch.  
+**Labels**: `production`, `performance`, `ci/cd`  
+
+---
+
+### PR4) Provenance Enforcement in Chat
+**Context**: Responses must be explainable.  
+**Tasks**:
+- Modify `/chat` to require provenance in all `ChatResponse`.  
+- Log/block any output lacking provenance.  
+- Extend `/chat/{session}/reset` to emit an `AuditEvent`.  
+**Deliverables**:
+- 100% responses carry provenance.  
+**Labels**: `production`, `chat`, `explainability`  
+
+---
+
+### PR5) Snapshot Signing & Migration
+**Context**: Ensure integrity and portability across versions.  
+**Tasks**:
+- Add SHA-256 + signature for snapshots.  
+- `/state/load` to verify integrity.  
+- Implement `/state/migrate?to=v2` with dry-run + diff.  
+**Deliverables**:
+- Corrupted snapshots rejected.  
+- Migration succeeds on N real snapshots.  
+**Labels**: `production`, `persistence`, `compatibility`  
+
+---
+
+### PR6) Observability Dashboards & Alerts
+**Context**: Enable operators to detect drift, instability, and perf issues.  
+**Tasks**:
+- Expose metrics: spikes/sec, synapse updates, latency, recall@k, drift, consolidation lag.  
+- Add `/inspect/spikes` raster export.  
+- Provide Grafana dashboards + alert rules (latency, error rate, drift, failed snapshot).  
+**Deliverables**:
+- On-call drill diagnosable in <30 min using dashboards.  
+**Labels**: `production`, `observability`, `ops`  
+
+---
+
+### PR7) Deployment Playbooks & Release Safety
+**Context**: Safe rollouts and rollbacks by snapshot version.  
+**Tasks**:
+- Document Compose (dev), Edge container, K8s cloud deployments.  
+- Implement canary rollout by snapshot; rollback by pinning.  
+- Add operator runbooks.  
+**Deliverables**:
+- Rolling upgrade test passes without downtime.  
+**Labels**: `production`, `deployment`, `ops`  
