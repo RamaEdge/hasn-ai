@@ -77,7 +77,6 @@ ipython_config.py
 *.hdf5
 
 # Neural network specific
-models/
 checkpoints/
 logs/
 tensorboard_logs/
