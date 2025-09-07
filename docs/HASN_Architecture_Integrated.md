@@ -223,4 +223,21 @@ flowchart TD
 
 - **Quick Start/API usage** (from `COMPLETE_SOLUTION.md`) is now in `docs/getting-started.md`.  
 - **Bugfix notes** (e.g., `ARRAY_COMPARISON_FIX.md`) are archived in `CHANGELOG.md`.  
-- Architecture doc remains **conceptual and structural**, while operational notes live in ADRs and changelogs.  
+- Architecture doc remains **conceptual and structural**, while operational notes live in ADRs and changelogs.
+
+---
+
+# 🏭 Production Readiness Extension (Appended on 2025-09-07)
+
+The following requirements extend the HASN architecture to make it **production ready**:
+
+- **Stability & Learning**: bounded dynamics, homeostasis, plasticity caps per window.  
+- **Determinism**: single RNG façade, fixed update order, golden master raster/weight checksums.  
+- **Performance Targets**: P95 ≤ 10ms (CPU), ≤ 2ms (GPU), ≥1e6 spikes/sec/core. Perf CI enforces thresholds.  
+- **Security & Governance**: signed snapshots, right-to-forget cascade, AuditEvents on all state changes.  
+- **Observability**: Prometheus metrics (spikes, updates, recall@k, drift), `/inspect/spikes` raster export, Grafana dashboards with alerts.  
+- **Portability**: snapshot schema versioning, migration with dry-run + checksum diff.  
+- **SLOs**: availability 99.5%, chat latency P50 ≤ 150ms / P95 ≤ 400ms, drift bounded vs 7-day baseline, recovery ≤ 10 min cold / ≤ 60s warm.  
+- **Release Safety**: canary by snapshot version, rollback by pinning.
+
+This section should be used as a **reference standard** for reviews, CI, and SRE runbooks.
