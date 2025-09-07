@@ -1,0 +1,180 @@
+---
+description: Guidelines for developing brain-inspired neural network components
+globs: src/core/*.py,src/training/*.py,src/demos/*.py
+---
+
+# Brain Network Development Guidelines
+
+## Core Architecture Principles
+
+### Spiking Neural Networks
+The HASN system uses **biological neuron models**, not continuous activation:
+
+```python
+class SimpleSpikingNeuron:
+    def __init__(self, neuron_id: int):
+        self.neuron_id = neuron_id
+        self.membrane_potential = 0.0
+        self.threshold = 1.0
+        self.last_spike_time = -1.0
+        self.weights = {}
+```
+
+### Learning Mechanisms
+Implement **STDP (Spike-Timing Dependent Plasticity)** instead of backpropagation:
+
+```python
+def apply_learning(self, input_spikes: Dict[int, bool], learning_rate: float = 0.01):
+    """Apply STDP learning rule based on spike timing"""
+    for input_id, spiked in input_spikes.items():
+        if spiked and self.last_spike_time > 0:
+            # Strengthen connection if input fired before this neuron
+            dt = self.last_spike_time - input_spike_time
+            if dt > 0:
+                self.weights[input_id] += learning_rate * np.exp(-dt / tau)
+```
+
+## Network Configuration
+
+### Use Dataclasses for Configuration
+Follow the pattern in [src/core/simplified_brain_network.py](mdc:src/core/simplified_brain_network.py):
+
+```python
+@dataclass
+class NetworkConfig:
+    dt: float = 1.0  # Timestep (ms)
+    weight_range: tuple = (0.1, 0.8)
+    learning_rate: float = 0.01
+    num_attention_modules: int = 4
+    max_spike_history: int = 100
+```
+
+### Cognitive Enhancements
+For cognitive features, extend the base network:
+
+```python
+class CognitiveBrainNetwork(SimpleBrainNetwork):
+    def __init__(self, num_neurons: int, config: CognitiveConfig = None):
+        super().__init__(num_neurons, config or CognitiveConfig())
+        # Add cognitive systems
+        self.episodic_memories: Dict[str, EpisodicMemory] = {}
+        self.memory_associations: Dict[str, Dict[str, float]] = defaultdict(dict)
+```
+
+## Training System Development
+
+### Interactive Training
+Follow the pattern in [src/training/interactive_brain_trainer.py](mdc:src/training/interactive_brain_trainer.py):
+
+```python
+class InteractiveBrainTrainer:
+    def __init__(self, module_sizes: List[int] = [50, 40, 30, 20]):
+        total_neurons = sum(module_sizes)
+        self.network = SimpleBrainNetwork(total_neurons)
+        self.training_metrics = {
+            "patterns_learned": 0,
+            "concepts_formed": 0,
+            "learning_stability": 0.0,
+        }
+```
+
+### Automated Learning
+For internet-based training, follow [src/training/automated_internet_trainer.py](mdc:src/training/automated_internet_trainer.py):
+
+```python
+class AutomatedInternetTrainer:
+    def __init__(self, brain_network: SimpleBrainNetwork):
+        self.brain = brain_network
+        self.content_collector = WebContentCollector()
+        self.pattern_converter = NeuralPatternConverter()
+```
+
+## Brain Portability
+
+### State Serialization
+Implement complete brain state preservation:
+
+```python
+def save_brain_state(self, filepath: str):
+    """Save complete brain state to JSON"""
+    state = {
+        "neurons": [neuron.to_dict() for neuron in self.neurons],
+        "connections": self.connections,
+        "config": self.config.__dict__,
+        "timestamp": datetime.now().isoformat()
+    }
+    with open(filepath, 'w') as f:
+        json.dump(state, f, indent=2)
+```
+
+### Memory Systems
+Implement episodic memory with context:
+
+```python
+def store_episodic_memory(self, pattern: Dict[int, bool], context: Dict[str, any]) -> str:
+    """Store episodic memory with contextual information"""
+    memory_id = f"episodic_{len(self.episodic_memories)}"
+    self.episodic_memories[memory_id] = EpisodicMemory(
+        pattern=pattern,
+        context=context,
+        timestamp=self.current_time,
+        access_count=0
+    )
+    return memory_id
+```
+
+## Performance Optimization
+
+### Use SimpleBrainNetwork as Base
+The project has determined that [src/core/simplified_brain_network.py](mdc:src/core/simplified_brain_network.py) is **2.3x faster** than alternatives while maintaining all essential functionality.
+
+### Efficient Data Structures
+- Use numpy arrays for numerical computations
+- Implement sparse connections for large networks
+- Use deques for temporal data with maxlen
+- Cache frequently accessed patterns
+
+## Logging and Monitoring
+
+### Use Emoji Indicators
+```python
+print(f"🧠 CognitiveBrainNetwork initialized with {num_neurons} neurons")
+print(f"📚 Max episodic memories: {self.config.max_episodic_memories}")
+print(f"🔗 Association threshold: {self.config.association_strength_threshold}")
+print(f"✅ Training completed successfully")
+print(f"⚠️ Warning: Memory capacity approaching limit")
+```
+
+### Metrics Tracking
+Implement comprehensive metrics:
+
+```python
+self.training_metrics = {
+    "patterns_learned": 0,
+    "concepts_formed": 0,
+    "interactions_processed": 0,
+    "learning_stability": 0.0,
+    "memory_utilization": 0.0,
+    "attention_stability": 0.0
+}
+```
+
+## Testing Brain Networks
+
+### Integration Tests
+Test brain network functionality end-to-end:
+
+```python
+def test_brain_learning_capability():
+    """Test that brain can learn and recall patterns"""
+    brain = SimpleBrainNetwork(num_neurons=50)
+    pattern = {i: True for i in range(10)}
+    
+    # Train the pattern
+    for _ in range(100):
+        brain.process_input(pattern)
+    
+    # Test recall
+    response = brain.process_input(pattern)
+    assert len(response) > 0, "Brain should respond to learned pattern"
+```

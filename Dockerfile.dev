@@ -1,0 +1,44 @@
+# Development Dockerfile for HASN-AI with hot-reload
+FROM python:3.13-slim
+
+# Set environment variables for development
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app/src \
+    LOG_LEVEL=DEBUG \
+    DEBUG=true
+
+WORKDIR /app
+
+# Install system dependencies for development
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY requirements.txt ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install development dependencies
+RUN pip install --no-cache-dir \
+    watchdog \
+    pytest \
+    pytest-asyncio \
+    pytest-cov \
+    black \
+    ruff
+
+# Copy source code
+COPY . .
+
+# Create output directory for brain states and logs
+RUN mkdir -p /app/output
+
+# Expose API port
+EXPOSE 8000
+
+# Default command for development with hot-reload
+CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--log-level", "debug"]

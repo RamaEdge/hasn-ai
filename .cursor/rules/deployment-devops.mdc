@@ -1,0 +1,255 @@
+---
+description: Deployment, DevOps, and infrastructure guidelines for HASN-AI
+globs: Dockerfile,k8s/*.yaml,.github/workflows/*.yml,Makefile
+---
+
+# Deployment & DevOps Guidelines
+
+## Containerization
+
+### Docker Configuration
+Follow the pattern in [Dockerfile](mdc:Dockerfile):
+
+```dockerfile
+# Multi-arch Python image for HASN-AI (API/Trainer/Monitor)
+FROM python:3.13-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app/src
+
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source
+COPY . .
+
+EXPOSE 8000
+
+# Default to API; override command in K8s for trainer/monitor
+CMD ["python", "src/api/main.py"]
+```
+
+### Multi-Architecture Support
+The project supports both AMD64 and ARM64 architectures as configured in [.github/workflows/docker-build.yml](mdc:.github/workflows/docker-build.yml):
+
+```yaml
+- name: Build and push
+  uses: docker/build-push-action@v6
+  with:
+    platforms: linux/amd64,linux/arm64
+    push: true
+    tags: ${{ steps.meta.outputs.tags }}
+```
+
+## Kubernetes Deployment
+
+### Deployment Configuration
+Follow the pattern in [k8s/api.yaml](mdc:k8s/api.yaml):
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hasn-api
+  namespace: hasn-ai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hasn-api
+  template:
+    spec:
+      nodeSelector:
+        storage: "big"  # Use nodes with sufficient storage
+      containers:
+        - name: api
+          image: ghcr.io/OWNER/hasn-ai:latest
+          env:
+            - name: PYTHONPATH
+              valueFrom:
+                configMapKeyRef:
+                  name: hasn-config
+                  key: PYTHONPATH
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: output
+              mountPath: /app/output
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+```
+
+### Resource Management
+- **CPU**: 200m request, 500m limit
+- **Memory**: 256Mi request, 512Mi limit
+- **Storage**: Persistent volume for brain state storage
+- **Node Selection**: Use nodes with "big" storage label
+
+## CI/CD Pipeline
+
+### GitHub Actions Workflow
+The project uses a comprehensive CI/CD pipeline in [.github/workflows/docker-build.yml](mdc:.github/workflows/docker-build.yml):
+
+#### Validation Job (PRs and non-main branches)
+```yaml
+validate:
+  if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref != 'refs/heads/main')
+  runs-on: ubuntu-latest
+  steps:
+    - name: Build (validate) amd64 image (no push)
+    - name: Trivy FS scan (repo)
+    - name: Trivy Image scan (validate image)
+```
+
+#### Build-Push Job (main branch only)
+```yaml
+build-push:
+  if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  runs-on: ubuntu-latest
+  steps:
+    - name: Build and push
+    - name: Trivy FS scan (repo)
+    - name: Trivy Image scan (pushed image)
+```
+
+### Security Scanning
+The pipeline includes comprehensive security scanning:
+
+```yaml
+- name: Trivy FS scan (repo)
+  uses: aquasecurity/trivy-action@0.32.0
+  with:
+    scan-type: fs
+    ignore-unfixed: true
+    format: sarif
+    severity: CRITICAL,HIGH,MEDIUM
+
+- name: Trivy Image scan
+  uses: aquasecurity/trivy-action@0.32.0
+  with:
+    image-ref: ${{ steps.vars.outputs.image }}
+    ignore-unfixed: true
+    format: sarif
+    severity: CRITICAL,HIGH,MEDIUM
+```
+
+## Development Workflow
+
+### Makefile Commands
+Use the commands defined in [Makefile](mdc:Makefile):
+
+```bash
+# Environment setup
+make venv          # Create virtual environment and install deps
+make install       # Install only runtime dependencies
+make deps          # Install/upgrade dev tools (ruff, black)
+
+# Code quality
+make lint          # Run ruff and black --check
+make format        # Auto-format with black and ruff --fix
+
+# Containerization
+make docker-build  # Build docker image locally
+
+# Security scanning
+make trivy-image   # Scan docker image
+make trivy-fs      # Scan filesystem
+make trivy-all     # Run both scans
+
+# Cleanup
+make clean         # Remove venv and caches
+```
+
+### Code Quality Tools
+The project uses:
+- **Black**: Code formatting with line-length=100
+- **Ruff**: Fast Python linter with E, F, I rules
+- **Trivy**: Security vulnerability scanning
+
+## Configuration Management
+
+### Environment Variables
+Key environment variables:
+- `PYTHONPATH=/app/src` - Python path configuration
+- `PYTHONDONTWRITEBYTECODE=1` - Disable .pyc files
+- `PYTHONUNBUFFERED=1` - Unbuffered output
+
+### Kubernetes ConfigMaps
+Use ConfigMaps for configuration:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hasn-config
+  namespace: hasn-ai
+data:
+  PYTHONPATH: "/app/src"
+```
+
+## Monitoring and Observability
+
+### Health Checks
+Implement comprehensive health endpoints:
+- `/health` - Basic health check
+- `/health/detailed` - Detailed system status
+- Brain network status monitoring
+
+### Logging
+- Structured logging with timestamps
+- Emoji indicators for different components
+- Error tracking and alerting
+
+### Metrics
+- Brain network performance metrics
+- API response times
+- Training progress tracking
+- Memory utilization monitoring
+
+## Security Best Practices
+
+### Container Security
+- Use slim base images
+- Run as non-root user (when possible)
+- Regular security scanning with Trivy
+- Keep dependencies updated
+
+### API Security
+- Rate limiting middleware
+- CORS configuration for production
+- Input validation and sanitization
+- Error message sanitization
+
+### Secrets Management
+- Use Kubernetes secrets for sensitive data
+- Never commit secrets to repository
+- Rotate secrets regularly
+
+## Production Deployment
+
+### Scaling Considerations
+- Horizontal scaling with multiple replicas
+- Resource limits and requests
+- Persistent storage for brain states
+- Load balancing for API endpoints
+
+### Backup and Recovery
+- Regular brain state backups
+- Database backups (if applicable)
+- Disaster recovery procedures
+- State restoration testing
+
+### Performance Optimization
+- Use appropriate resource limits
+- Monitor memory usage for large networks
+- Optimize brain network parameters
+- Cache frequently accessed data

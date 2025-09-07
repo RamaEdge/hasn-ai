@@ -1,0 +1,61 @@
+---
+alwaysApply: true
+description: Project structure and architecture guidelines for HASN-AI
+---
+
+# HASN-AI Project Structure Guide
+
+## Core Architecture
+
+This is a **brain-inspired neural network** project implementing a **Hierarchical Adaptive Spiking Network (HASN)**. The main entry points are:
+
+- **API Server**: [src/api/main.py](mdc:src/api/main.py) - FastAPI production server
+- **Core Networks**: [src/core/](mdc:src/core/) - Brain network implementations
+- **Training System**: [src/training/](mdc:src/training/) - Automated learning components
+- **Build System**: [Makefile](mdc:Makefile) - Development and deployment commands
+
+## Key Components
+
+### Brain Networks
+
+- **SimpleBrainNetwork**: [src/core/simplified_brain_network.py](mdc:src/core/simplified_brain_network.py) - Core spiking neural network (2.3x faster than alternatives)
+- **CognitiveBrainNetwork**: [src/core/cognitive_brain_network.py](mdc:src/core/cognitive_brain_network.py) - Enhanced with episodic memory and inference
+
+### API Layer
+
+- **Main API**: [src/api/main.py](mdc:src/api/main.py) - Production FastAPI server with dependency injection
+- **Routes**: [src/api/routes/](mdc:src/api/routes/) - Modular route handlers
+- **Adapters**: [src/api/adapters/brain_adapters.py](mdc:src/api/adapters/brain_adapters.py) - Brain network adapters
+
+### Training & Learning
+
+- **Automated Training**: [src/training/automated_internet_trainer.py](mdc:src/training/automated_internet_trainer.py) - 24/7 internet learning
+- **Interactive Training**: [src/training/interactive_brain_trainer.py](mdc:src/training/interactive_brain_trainer.py) - Real-time training interface
+- **CLI Training**: [src/training/train_cli.py](mdc:src/training/train_cli.py) - Command-line training interface
+
+## Project Philosophy
+
+This is a **revolutionary AI system** that:
+
+- Uses **spiking neurons** instead of continuous activation
+- Implements **STDP learning** instead of backpropagation
+- Features **complete brain portability** (save/load trained states)
+- Provides **real-time continuous learning**
+- Offers **1000x energy efficiency** over traditional networks
+
+## Development Workflow
+
+1. **Setup**: `make venv` - Create virtual environment and install dependencies
+2. **Linting**: `make lint` - Run ruff and black checks
+3. **Formatting**: `make format` - Auto-format code
+4. **Testing**: Run tests in [src/tests/](mdc:src/tests/)
+5. **Docker**: `make docker-build` - Build containerized application
+6. **Security**: `make trivy-all` - Run security scans
+
+## Key Features
+
+- **Brain Portability**: Complete neural state preservation in JSON format
+- **Automated Learning**: Continuous internet-based knowledge acquisition
+- **Production APIs**: Multiple API interfaces (simple, advanced, brain-native)
+- **Real-time Adaptation**: Self-organizing network structure
+- **Energy Efficiency**: Event-driven computation for neuromorphic hardware
