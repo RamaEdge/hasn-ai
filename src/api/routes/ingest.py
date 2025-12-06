@@ -5,12 +5,13 @@ Implements /ingest/submit endpoint with validation
 """
 
 import logging
-from typing import Optional, Dict, Any
-from fastapi import APIRouter, HTTPException, Depends
+from typing import Any, Dict, Optional
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from ingestion.service import IngestionService, QuarantineBuffer
 from ingestion.models import IngestItem
+from ingestion.service import IngestionService, QuarantineBuffer
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -30,6 +31,7 @@ def get_ingestion_service() -> IngestionService:
 
 class IngestSubmitRequest(BaseModel):
     """Request model for /ingest/submit"""
+
     content: str
     source_url: Optional[str] = None
     license_type: Optional[str] = None
@@ -38,6 +40,7 @@ class IngestSubmitRequest(BaseModel):
 
 class IngestSubmitResponse(BaseModel):
     """Response model for /ingest/submit"""
+
     success: bool
     item_id: str
     status: str
@@ -46,12 +49,11 @@ class IngestSubmitResponse(BaseModel):
 
 @router.post("/submit", response_model=IngestSubmitResponse)
 async def submit_item(
-    request: IngestSubmitRequest,
-    service: IngestionService = Depends(get_ingestion_service)
+    request: IngestSubmitRequest, service: IngestionService = Depends(get_ingestion_service)
 ) -> IngestSubmitResponse:
     """
     Submit content for ingestion
-    
+
     Validates license and robots.txt compliance, then adds to quarantine buffer.
     """
     try:
@@ -59,16 +61,16 @@ async def submit_item(
             content=request.content,
             source_url=request.source_url,
             license_type=request.license_type,
-            metadata=request.metadata
+            metadata=request.metadata,
         )
-        
+
         return IngestSubmitResponse(
             success=True,
             item_id=item.item_id,
             status=item.status.value,
-            message=f"Item submitted and quarantined"
+            message="Item submitted and quarantined",
         )
-    
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
@@ -78,8 +80,7 @@ async def submit_item(
 
 @router.get("/items/{item_id}")
 async def get_item(
-    item_id: str,
-    service: IngestionService = Depends(get_ingestion_service)
+    item_id: str, service: IngestionService = Depends(get_ingestion_service)
 ) -> IngestItem:
     """Get an ingested item by ID"""
     item = service.quarantine_buffer.get_item(item_id)
@@ -92,22 +93,18 @@ async def get_item(
 async def list_items(
     status: Optional[str] = None,
     limit: int = 100,
-    service: IngestionService = Depends(get_ingestion_service)
+    service: IngestionService = Depends(get_ingestion_service),
 ) -> Dict[str, Any]:
     """List ingested items"""
     from ingestion.models import IngestStatus
-    
+
     status_filter = None
     if status:
         try:
             status_filter = IngestStatus(status)
         except ValueError:
             raise HTTPException(status_code=400, detail=f"Invalid status: {status}")
-    
-    items = service.quarantine_buffer.list_items(status=status_filter, limit=limit)
-    
-    return {
-        "items": [item.model_dump() for item in items],
-        "count": len(items)
-    }
 
+    items = service.quarantine_buffer.list_items(status=status_filter, limit=limit)
+
+    return {"items": [item.model_dump() for item in items], "count": len(items)}

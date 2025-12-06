@@ -1,1 +1,408 @@
-#!/usr/bin/env python3 """ Hyperparameter Optimizer - Optuna-based optimization for CognitiveConfig parameters Finds optimal learning parameters through Bayesian optimization """ import json import time from datetime import datetime from pathlib import Path from typing import Dict, List, Optional, Any, Tuple import numpy as np try: import optuna from optuna import Trial, Study OPTUNA_AVAILABLE = True except ImportError: OPTUNA_AVAILABLE = False Trial = None Study = None from ..core.cognitive_models import CognitiveConfig from ..core.cognitive_architecture import CognitiveArchitecture from ..common.random import seed_rng class HyperparameterOptimizer: """ Optimizes CognitiveConfig parameters using Optuna Bayesian optimization. Finds optimal learning parameters by: 1. Suggesting parameter values using Bayesian optimization 2. Training architecture with suggested parameters 3. Evaluating performance on validation dataset 4. Learning from results to suggest better parameters """ def __init__(self, storage_path: str = "./optimization_studies"): """ Initialize optimizer. Args: storage_path: Directory for storing optimization studies """ if not OPTUNA_AVAILABLE: raise ImportError( "Optuna not available. Install with: pip install optuna" ) self.storage_path = Path(storage_path) self.storage_path.mkdir(parents=True, exist_ok=True) print(f" Hyperparameter Optimizer initialized") print(f" Storage: {self.storage_path}") def suggest_parameters(self, trial: Trial) -> CognitiveConfig: """ Suggest parameter values for a trial. Args: trial: Optuna trial object Returns: CognitiveConfig with suggested parameter values """ # Backend learning parameters min_weight_bound = trial.suggest_float('min_weight_bound', 0.0, 0.5) max_weight_bound = trial.suggest_float('max_weight_bound', 1.0, 3.0) background_noise_level = trial.suggest_float('background_noise_level', 0.001, 0.05, log=True) # Associative learning parameters hebbian_learning_rate = trial.suggest_float('hebbian_learning_rate', 0.001, 0.1, log=True) max_association_strength = trial.suggest_float('max_association_strength', 0.5, 2.0) # Association weight combinations (must sum to ~1.0) association_weight_pattern = trial.suggest_float('association_weight_pattern', 0.2, 0.6) association_weight_temporal = trial.suggest_float('association_weight_temporal', 0.1, 0.4) association_weight_context = trial.suggest_float('association_weight_context', 0.1, 0.4) # Memory system parameters consolidation_threshold = trial.suggest_float('consolidation_threshold', 0.3, 0.9) semantic_consolidation_threshold = trial.suggest_int('semantic_consolidation_threshold', 2, 10) max_confidence = trial.suggest_float('max_confidence', 0.7, 1.0) min_concept_traces_for_consolidation = trial.suggest_int('min_concept_traces_for_consolidation', 1, 5) # Sensory parameters background_spike_probability = trial.suggest_float('background_spike_probability', 0.001, 0.05, log=True) activation_pattern_threshold = trial.suggest_float('activation_pattern_threshold', 0.3, 0.7) # Executive parameters consolidation_priority_weight_access = trial.suggest_float('consolidation_priority_weight_access', 0.5, 0.9) consolidation_priority_weight_recency = trial.suggest_float('consolidation_priority_weight_recency', 0.1, 0.5) min_relevance_threshold = trial.suggest_float('min_relevance_threshold', 0.01, 0.2) # Relevance weights (must sum to ~1.0) relevance_weight_pattern = trial.suggest_float('relevance_weight_pattern', 0.1, 0.5) relevance_weight_context = trial.suggest_float('relevance_weight_context', 0.3, 0.7) relevance_weight_memory = trial.suggest_float('relevance_weight_memory', 0.1, 0.4) # Create config with suggested parameters config = CognitiveConfig( # Backend min_weight_bound=min_weight_bound, max_weight_bound=max_weight_bound, background_noise_level=background_noise_level, # Associative learning hebbian_learning_rate=hebbian_learning_rate, max_association_strength=max_association_strength, association_weight_pattern=association_weight_pattern, association_weight_temporal=association_weight_temporal, association_weight_context=association_weight_context, # Memory systems consolidation_threshold=consolidation_threshold, semantic_consolidation_threshold=semantic_consolidation_threshold, max_confidence=max_confidence, min_concept_traces_for_consolidation=min_concept_traces_for_consolidation, # Sensory background_spike_probability=background_spike_probability, activation_pattern_threshold=activation_pattern_threshold, # Executive consolidation_priority_weight_access=consolidation_priority_weight_access, consolidation_priority_weight_recency=consolidation_priority_weight_recency, min_relevance_threshold=min_relevance_threshold, relevance_weight_pattern=relevance_weight_pattern, relevance_weight_context=relevance_weight_context, relevance_weight_memory=relevance_weight_memory, ) return config def evaluate_config( self, config: CognitiveConfig, training_data: List[Dict[str, Any]], validation_data: Optional[List[Dict[str, Any]]] = None, seed: int = 42, ) -> Dict[str, float]: """ Evaluate a configuration by training and measuring performance. Args: config: CognitiveConfig to evaluate training_data: Training dataset (list of inputs with concepts) validation_data: Optional validation dataset seed: Random seed for reproducibility Returns: Dictionary of performance metrics """ seed_rng(seed) # Create architecture with config architecture = CognitiveArchitecture(config=config, backend_name="numpy") # Training phase training_start = time.time() training_metrics = { "concepts_learned": 0, "semantic_memories_formed": 0, "consolidation_events": 0, "processing_times": [], } for item in training_data: input_data = item.get("input", "") concept = item.get("concept", "unknown") context = item.get("context", {}) start_time = time.time() result = architecture.process_input(input_data, context={"concept": concept, **context}) processing_time = time.time() - start_time training_metrics["processing_times"].append(processing_time) if result.get("consolidation_result", {}).get("consolidated"): training_metrics["consolidation_events"] += 1 # Track concepts learned if concept not in [m.concept for m in architecture.semantic_memory.semantic_memories.values()]: training_metrics["concepts_learned"] += 1 training_time = time.time() - training_start # Count semantic memories training_metrics["semantic_memories_formed"] = len(architecture.semantic_memory.semantic_memories) # Validation phase (if provided) validation_metrics = {} if validation_data: validation_start = time.time() correct_recalls = 0 total_validations = 0 for item in validation_data: input_data = item.get("input", "") expected_concept = item.get("concept", "") result = architecture.process_input(input_data) # Check if we can recall the concept if expected_concept: semantic = architecture.semantic_memory.find_semantic_memory(expected_concept) if semantic: correct_recalls += 1 total_validations += 1 validation_time = time.time() - validation_start validation_metrics = { "recall_accuracy": correct_recalls / total_validations if total_validations > 0 else 0.0, "validation_time": validation_time, } # Calculate composite performance score # Primary: Learning efficiency (concepts learned per second) learning_efficiency = training_metrics["concepts_learned"] / training_time if training_time > 0 else 0.0 # Secondary: Consolidation quality (semantic memories formed) consolidation_quality = training_metrics["semantic_memories_formed"] / max(1, training_metrics["concepts_learned"]) # Tertiary: Processing speed (average processing time) avg_processing_time = np.mean(training_metrics["processing_times"]) if training_metrics["processing_times"] else 1.0 processing_speed = 1.0 / avg_processing_time # Higher is better # Composite score (weighted combination) composite_score = ( 0.5 * learning_efficiency + 0.3 * consolidation_quality + 0.2 * processing_speed ) # Add validation accuracy if available if validation_metrics: composite_score += 0.3 * validation_metrics["recall_accuracy"] composite_score /= 1.3 # Normalize back return { "composite_score": composite_score, "learning_efficiency": learning_efficiency, "consolidation_quality": consolidation_quality, "processing_speed": processing_speed, "training_time": training_time, "concepts_learned": training_metrics["concepts_learned"], "semantic_memories_formed": training_metrics["semantic_memories_formed"], "consolidation_events": training_metrics["consolidation_events"], **validation_metrics, } def optimize( self, training_data: List[Dict[str, Any]], validation_data: Optional[List[Dict[str, Any]]] = None, n_trials: int = 100, study_name: Optional[str] = None, direction: str = "maximize", seed: int = 42, ) -> Tuple[Study, CognitiveConfig]: """ Run optimization study to find optimal parameters. Args: training_data: Training dataset validation_data: Optional validation dataset n_trials: Number of optimization trials study_name: Optional study name (auto-generated if None) direction: "maximize" or "minimize" the objective seed: Random seed for reproducibility Returns: Tuple of (Optuna Study, Best CognitiveConfig) """ if study_name is None: study_name = f"optimization_{datetime.now().strftime('%Y%m%d_%H%M%S')}" print(f" Starting optimization study: {study_name}") print(f" Trials: {n_trials}") print(f" Training samples: {len(training_data)}") if validation_data: print(f" Validation samples: {len(validation_data)}") # Create study study = optuna.create_study( study_name=study_name, direction=direction, storage=f"sqlite:///{self.storage_path / f'{study_name}.db'}", load_if_exists=False, ) # Objective function def objective(trial: Trial) -> float: config = self.suggest_parameters(trial) metrics = self.evaluate_config(config, training_data, validation_data, seed=seed) # Log trial results trial.set_user_attr("concepts_learned", metrics["concepts_learned"]) trial.set_user_attr("semantic_memories", metrics["semantic_memories_formed"]) trial.set_user_attr("consolidation_events", metrics["consolidation_events"]) if "recall_accuracy" in metrics: trial.set_user_attr("recall_accuracy", metrics["recall_accuracy"]) return metrics["composite_score"] # Run optimization print(f" Running {n_trials} trials...") study.optimize(objective, n_trials=n_trials, show_progress_bar=True) # Get best parameters best_params = study.best_params best_config = self._params_to_config(best_params) print(f"\n Optimization complete!") print(f" Best trial: {study.best_trial.number}") print(f" Best score: {study.best_value:.4f}") print(f" Best config saved") # Save best config self.save_config(best_config, study_name) return study, best_config def _params_to_config(self, params: Dict[str, Any]) -> CognitiveConfig: """Convert Optuna params dict to CognitiveConfig""" # Filter params to only include CognitiveConfig fields # Pydantic v2 uses model_fields, v1 uses __fields__ if hasattr(CognitiveConfig, 'model_fields'): config_fields = set(CognitiveConfig.model_fields.keys()) elif hasattr(CognitiveConfig, '__fields__'): config_fields = set(CognitiveConfig.__fields__.keys()) else: # Fallback: try to create config and let Pydantic validate config_fields = set(params.keys()) filtered_params = {k: v for k, v in params.items() if k in config_fields} return CognitiveConfig(**filtered_params) def save_config(self, config: CognitiveConfig, name: str): """Save optimized config to file""" config_file = self.storage_path / f"{name}_best_config.json" config_dict = config.dict() with open(config_file, "w") as f: json.dump(config_dict, f, indent=2) print(f" Saved best config to: {config_file}") def load_config(self, name: str) -> CognitiveConfig: """Load optimized config from file""" config_file = self.storage_path / f"{name}_best_config.json" if not config_file.exists(): raise FileNotFoundError(f"Config file not found: {config_file}") with open(config_file, "r") as f: config_dict = json.load(f) return CognitiveConfig(**config_dict) def create_synthetic_dataset( self, num_concepts: int = 20, samples_per_concept: int = 5, ) -> List[Dict[str, Any]]: """ Create synthetic training dataset for optimization. Args: num_concepts: Number of different concepts samples_per_concept: Number of samples per concept Returns: List of training samples """ dataset = [] concepts = [f"concept_{i}" for i in range(num_concepts)] for concept in concepts: for i in range(samples_per_concept): # Create varied inputs for same concept input_text = f"{concept} example {i} with some variation" dataset.append({ "input": input_text, "concept": concept, "context": {"example_id": i, "source": "synthetic"}, }) return dataset 
+"""
+Hyperparameter Optimizer - Optuna-based optimization for CognitiveConfig parameters
+Finds optimal learning parameters through Bayesian optimization
+"""
+
+import json
+import time
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+
+try:
+    import optuna
+    from optuna import Study, Trial
+
+    OPTUNA_AVAILABLE = True
+except ImportError:
+    OPTUNA_AVAILABLE = False
+    Trial = None
+    Study = None
+
+from common.random import seed_rng
+from core.cognitive_architecture import CognitiveArchitecture
+from core.cognitive_models import CognitiveConfig
+
+
+class HyperparameterOptimizer:
+    """
+    Optimizes CognitiveConfig parameters using Optuna Bayesian optimization.
+
+    Finds optimal learning parameters by:
+    1. Suggesting parameter values using Bayesian optimization
+    2. Training architecture with suggested parameters
+    3. Evaluating performance on validation dataset
+    4. Learning from results to suggest better parameters
+    """
+
+    def __init__(self, storage_path: str = "./optimization_studies"):
+        """
+        Initialize optimizer.
+
+        Args:
+            storage_path: Directory for storing optimization studies
+        """
+        if not OPTUNA_AVAILABLE:
+            raise ImportError("Optuna not available. Install with: pip install optuna")
+
+        self.storage_path = Path(storage_path)
+        self.storage_path.mkdir(parents=True, exist_ok=True)
+
+        print("Hyperparameter Optimizer initialized")
+        print(f"Storage: {self.storage_path}")
+
+    def suggest_parameters(self, trial: Trial) -> CognitiveConfig:
+        """
+        Suggest parameter values for a trial.
+
+        Args:
+            trial: Optuna trial object
+
+        Returns:
+            CognitiveConfig with suggested parameter values
+        """
+        # Backend learning parameters
+        min_weight_bound = trial.suggest_float("min_weight_bound", 0.0, 0.5)
+        max_weight_bound = trial.suggest_float("max_weight_bound", 1.0, 3.0)
+        background_noise_level = trial.suggest_float(
+            "background_noise_level", 0.001, 0.05, log=True
+        )
+
+        # Associative learning parameters
+        hebbian_learning_rate = trial.suggest_float("hebbian_learning_rate", 0.001, 0.1, log=True)
+        max_association_strength = trial.suggest_float("max_association_strength", 0.5, 2.0)
+
+        # Association weight combinations (must sum to ~1.0)
+        association_weight_pattern = trial.suggest_float("association_weight_pattern", 0.2, 0.6)
+        association_weight_temporal = trial.suggest_float("association_weight_temporal", 0.1, 0.4)
+        association_weight_context = trial.suggest_float("association_weight_context", 0.1, 0.4)
+
+        # Memory system parameters
+        consolidation_threshold = trial.suggest_float("consolidation_threshold", 0.3, 0.9)
+        semantic_consolidation_threshold = trial.suggest_int(
+            "semantic_consolidation_threshold", 2, 10
+        )
+        max_confidence = trial.suggest_float("max_confidence", 0.7, 1.0)
+        min_concept_traces_for_consolidation = trial.suggest_int(
+            "min_concept_traces_for_consolidation", 1, 5
+        )
+
+        # Sensory parameters
+        background_spike_probability = trial.suggest_float(
+            "background_spike_probability", 0.001, 0.05, log=True
+        )
+        activation_pattern_threshold = trial.suggest_float("activation_pattern_threshold", 0.3, 0.7)
+
+        # Executive parameters
+        consolidation_priority_weight_access = trial.suggest_float(
+            "consolidation_priority_weight_access", 0.5, 0.9
+        )
+        consolidation_priority_weight_recency = trial.suggest_float(
+            "consolidation_priority_weight_recency", 0.1, 0.5
+        )
+        min_relevance_threshold = trial.suggest_float("min_relevance_threshold", 0.01, 0.2)
+
+        # Relevance weights (must sum to ~1.0)
+        relevance_weight_pattern = trial.suggest_float("relevance_weight_pattern", 0.1, 0.5)
+        relevance_weight_context = trial.suggest_float("relevance_weight_context", 0.3, 0.7)
+        relevance_weight_memory = trial.suggest_float("relevance_weight_memory", 0.1, 0.4)
+
+        # Create config with suggested parameters
+        config = CognitiveConfig(
+            # Backend
+            min_weight_bound=min_weight_bound,
+            max_weight_bound=max_weight_bound,
+            background_noise_level=background_noise_level,
+            # Associative learning
+            hebbian_learning_rate=hebbian_learning_rate,
+            max_association_strength=max_association_strength,
+            association_weight_pattern=association_weight_pattern,
+            association_weight_temporal=association_weight_temporal,
+            association_weight_context=association_weight_context,
+            # Memory systems
+            consolidation_threshold=consolidation_threshold,
+            semantic_consolidation_threshold=semantic_consolidation_threshold,
+            max_confidence=max_confidence,
+            min_concept_traces_for_consolidation=min_concept_traces_for_consolidation,
+            # Sensory
+            background_spike_probability=background_spike_probability,
+            activation_pattern_threshold=activation_pattern_threshold,
+            # Executive
+            consolidation_priority_weight_access=consolidation_priority_weight_access,
+            consolidation_priority_weight_recency=consolidation_priority_weight_recency,
+            min_relevance_threshold=min_relevance_threshold,
+            relevance_weight_pattern=relevance_weight_pattern,
+            relevance_weight_context=relevance_weight_context,
+            relevance_weight_memory=relevance_weight_memory,
+        )
+
+        return config
+
+    def evaluate_config(
+        self,
+        config: CognitiveConfig,
+        training_data: List[Dict[str, Any]],
+        validation_data: Optional[List[Dict[str, Any]]] = None,
+        seed: int = 42,
+    ) -> Dict[str, float]:
+        """
+        Evaluate a configuration by training and measuring performance.
+
+        Args:
+            config: CognitiveConfig to evaluate
+            training_data: Training dataset (list of inputs with concepts)
+            validation_data: Optional validation dataset
+            seed: Random seed for reproducibility
+
+        Returns:
+            Dictionary of performance metrics
+        """
+        seed_rng(seed)
+
+        # Create architecture with config
+        architecture = CognitiveArchitecture(config=config, backend_name="numpy")
+
+        # Training phase
+        training_start = time.time()
+        training_metrics = {
+            "concepts_learned": 0,
+            "semantic_memories_formed": 0,
+            "consolidation_events": 0,
+            "processing_times": [],
+        }
+
+        for item in training_data:
+            input_data = item.get("input", "")
+            concept = item.get("concept", "unknown")
+            context = item.get("context", {})
+
+            start_time = time.time()
+            result = architecture.process_input(input_data, context={"concept": concept, **context})
+            processing_time = time.time() - start_time
+
+            training_metrics["processing_times"].append(processing_time)
+
+            if result.get("consolidation_result", {}).get("consolidated"):
+                training_metrics["consolidation_events"] += 1
+
+            # Track concepts learned
+            if concept not in [
+                m.concept for m in architecture.semantic_memory.semantic_memories.values()
+            ]:
+                training_metrics["concepts_learned"] += 1
+
+        training_time = time.time() - training_start
+
+        # Count semantic memories
+        training_metrics["semantic_memories_formed"] = len(
+            architecture.semantic_memory.semantic_memories
+        )
+
+        # Validation phase (if provided)
+        validation_metrics = {}
+        if validation_data:
+            validation_start = time.time()
+            correct_recalls = 0
+            total_validations = 0
+
+            for item in validation_data:
+                input_data = item.get("input", "")
+                expected_concept = item.get("concept", "")
+
+                result = architecture.process_input(input_data)
+
+                # Check if we can recall the concept
+                if expected_concept:
+                    semantic = architecture.semantic_memory.find_semantic_memory(expected_concept)
+                    if semantic:
+                        correct_recalls += 1
+                    total_validations += 1
+
+            validation_time = time.time() - validation_start
+            validation_metrics = {
+                "recall_accuracy": (
+                    correct_recalls / total_validations if total_validations > 0 else 0.0
+                ),
+                "validation_time": validation_time,
+            }
+
+        # Calculate composite performance score
+        # Primary: Learning efficiency (concepts learned per second)
+        learning_efficiency = (
+            training_metrics["concepts_learned"] / training_time if training_time > 0 else 0.0
+        )
+
+        # Secondary: Consolidation quality (semantic memories formed)
+        consolidation_quality = training_metrics["semantic_memories_formed"] / max(
+            1, training_metrics["concepts_learned"]
+        )
+
+        # Tertiary: Processing speed (average processing time)
+        avg_processing_time = (
+            np.mean(training_metrics["processing_times"])
+            if training_metrics["processing_times"]
+            else 1.0
+        )
+        processing_speed = 1.0 / avg_processing_time  # Higher is better
+
+        # Composite score (weighted combination)
+        composite_score = (
+            0.5 * learning_efficiency + 0.3 * consolidation_quality + 0.2 * processing_speed
+        )
+
+        # Add validation accuracy if available
+        if validation_metrics:
+            composite_score += 0.3 * validation_metrics["recall_accuracy"]
+            composite_score /= 1.3  # Normalize back
+
+        return {
+            "composite_score": composite_score,
+            "learning_efficiency": learning_efficiency,
+            "consolidation_quality": consolidation_quality,
+            "processing_speed": processing_speed,
+            "training_time": training_time,
+            "concepts_learned": training_metrics["concepts_learned"],
+            "semantic_memories_formed": training_metrics["semantic_memories_formed"],
+            "consolidation_events": training_metrics["consolidation_events"],
+            **validation_metrics,
+        }
+
+    def optimize(
+        self,
+        training_data: List[Dict[str, Any]],
+        validation_data: Optional[List[Dict[str, Any]]] = None,
+        n_trials: int = 100,
+        study_name: Optional[str] = None,
+        direction: str = "maximize",
+        seed: int = 42,
+    ) -> Tuple[Study, CognitiveConfig]:
+        """
+        Run optimization study to find optimal parameters.
+
+        Args:
+            training_data: Training dataset
+            validation_data: Optional validation dataset
+            n_trials: Number of optimization trials
+            study_name: Optional study name (auto-generated if None)
+            direction: "maximize" or "minimize" the objective
+            seed: Random seed for reproducibility
+
+        Returns:
+            Tuple of (Optuna Study, Best CognitiveConfig)
+        """
+        if study_name is None:
+            study_name = f"optimization_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+        print(f"Starting optimization study: {study_name}")
+        print(f"Trials: {n_trials}")
+        print(f"Training samples: {len(training_data)}")
+        if validation_data:
+            print(f"Validation samples: {len(validation_data)}")
+
+        # Create study
+        study = optuna.create_study(
+            study_name=study_name,
+            direction=direction,
+            storage=f"sqlite:///{self.storage_path / f'{study_name}.db'}",
+            load_if_exists=False,
+        )
+
+        # Objective function
+        def objective(trial: Trial) -> float:
+            config = self.suggest_parameters(trial)
+            metrics = self.evaluate_config(config, training_data, validation_data, seed=seed)
+
+            # Log trial results
+            trial.set_user_attr("concepts_learned", metrics["concepts_learned"])
+            trial.set_user_attr("semantic_memories", metrics["semantic_memories_formed"])
+            trial.set_user_attr("consolidation_events", metrics["consolidation_events"])
+            if "recall_accuracy" in metrics:
+                trial.set_user_attr("recall_accuracy", metrics["recall_accuracy"])
+
+            return metrics["composite_score"]
+
+        # Run optimization
+        print(f"Running {n_trials} trials...")
+        study.optimize(objective, n_trials=n_trials, show_progress_bar=True)
+
+        # Get best parameters
+        best_params = study.best_params
+        best_config = self._params_to_config(best_params)
+
+        print("\nOptimization complete!")
+        print(f"Best trial: {study.best_trial.number}")
+        print(f"Best score: {study.best_value:.4f}")
+        print("Best config saved")
+
+        # Save best config
+        self.save_config(best_config, study_name)
+
+        return study, best_config
+
+    def _params_to_config(self, params: Dict[str, Any]) -> CognitiveConfig:
+        """Convert Optuna params dict to CognitiveConfig"""
+        # Filter params to only include CognitiveConfig fields
+        # Pydantic v2 uses model_fields, v1 uses __fields__
+        if hasattr(CognitiveConfig, "model_fields"):
+            config_fields = set(CognitiveConfig.model_fields.keys())
+        elif hasattr(CognitiveConfig, "__fields__"):
+            config_fields = set(CognitiveConfig.__fields__.keys())
+        else:
+            # Fallback: try to create config and let Pydantic validate
+            config_fields = set(params.keys())
+
+        filtered_params = {k: v for k, v in params.items() if k in config_fields}
+        return CognitiveConfig(**filtered_params)
+
+    def save_config(self, config: CognitiveConfig, name: str):
+        """Save optimized config to file"""
+        config_file = self.storage_path / f"{name}_best_config.json"
+        config_dict = config.dict()
+        with open(config_file, "w") as f:
+            json.dump(config_dict, f, indent=2)
+        print(f"Saved best config to: {config_file}")
+
+    def load_config(self, name: str) -> CognitiveConfig:
+        """Load optimized config from file"""
+        config_file = self.storage_path / f"{name}_best_config.json"
+        if not config_file.exists():
+            raise FileNotFoundError(f"Config file not found: {config_file}")
+
+        with open(config_file, "r") as f:
+            config_dict = json.load(f)
+
+        return CognitiveConfig(**config_dict)
+
+    def create_synthetic_dataset(
+        self,
+        num_concepts: int = 20,
+        samples_per_concept: int = 5,
+    ) -> List[Dict[str, Any]]:
+        """
+        Create synthetic training dataset for optimization.
+
+        Args:
+            num_concepts: Number of different concepts
+            samples_per_concept: Number of samples per concept
+
+        Returns:
+            List of training samples
+        """
+        dataset = []
+        concepts = [f"concept_{i}" for i in range(num_concepts)]
+
+        for concept in concepts:
+            for i in range(samples_per_concept):
+                # Create varied inputs for same concept
+                input_text = f"{concept} example {i} with some variation"
+                dataset.append(
+                    {
+                        "input": input_text,
+                        "concept": concept,
+                        "context": {"example_id": i, "source": "synthetic"},
+                    }
+                )
+
+        return dataset

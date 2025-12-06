@@ -4,14 +4,14 @@ Health check routes for API monitoring
 
 import time
 from datetime import datetime, timedelta
+from typing import Any, Dict
 
 import psutil
 from fastapi import APIRouter
-
 from pydantic import BaseModel
-from typing import Dict, Any
 
 router = APIRouter()
+
 
 # Simple response model
 class HealthResponse(BaseModel):
@@ -20,6 +20,7 @@ class HealthResponse(BaseModel):
     uptime_seconds: float
     brain_networks: Dict[str, bool]
     system_info: Dict[str, Any]
+
 
 # Track startup time for uptime calculation
 startup_time = time.time()

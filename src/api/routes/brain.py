@@ -5,36 +5,40 @@ Brain processing routes for neural network operations
 import asyncio
 import logging
 import time
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
-
 from pydantic import BaseModel
-from typing import Dict, Any, List
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
 
 # Simple request/response models
 class NeuralPatternRequest(BaseModel):
     pattern: Dict[str, Dict[str, bool]]
 
+
 class TextToPatternRequest(BaseModel):
     text: str
     encoding_method: str = "character_frequency"
+
 
 class BrainSimulationRequest(BaseModel):
     input_data: Dict[str, Any]
     simulation_steps: int = 10
 
+
 class BatchProcessingRequest(BaseModel):
     inputs: List[Dict[str, Any]]
+
 
 class APIResponse(BaseModel):
     success: bool
     message: str = ""
     data: Dict[str, Any] = {}
     processing_time: float = 0.0
+
 
 class BrainProcessResponse(BaseModel):
     success: bool
