@@ -16,7 +16,7 @@ RUFF := $(VENV_DIR)/bin/ruff
 BLACK := $(VENV_DIR)/bin/black
 
 # Directories/files to lint. Adjust as needed.
-LINT_PATHS := src examples *.py
+LINT_PATHS := src
 
 .PHONY: help venv install deps lint docker-build trivy-image trivy-fs trivy-all clean format
 

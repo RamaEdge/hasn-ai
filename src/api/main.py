@@ -7,7 +7,7 @@ import logging
 import os
 import sys
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
@@ -19,11 +19,12 @@ from pydantic import BaseModel
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Core imports
-from core.cognitive_brain_network import CognitiveBrainNetwork, CognitiveConfig
-from core.simplified_brain_network import SimpleBrainNetwork
 from api.adapters.brain_adapters import CognitiveBrainAdapter, SimpleBrainAdapter
 from api.middleware.rate_limit import RateLimitMiddleware
 from api.routes import brain, health, training
+from core.cognitive_brain_network import CognitiveBrainNetwork, CognitiveConfig
+from core.simplified_brain_network import SimpleBrainNetwork
+
 
 # Optional route imports
 def _import_optional_route(module_name: str):
@@ -33,16 +34,19 @@ def _import_optional_route(module_name: str):
     except ImportError:
         return None
 
+
 automated_training = _import_optional_route("automated_training")
 state = _import_optional_route("state")
 knowledge = _import_optional_route("knowledge")
 ingest = _import_optional_route("ingest")
 train_ingest = _import_optional_route("train_ingest")
+chat = _import_optional_route("chat")
 
 # Optional ingestion imports
 try:
-    from ingestion.service import IngestionService, QuarantineBuffer
     from ingestion.replay_trainer import ReplayTrainer
+    from ingestion.service import IngestionService, QuarantineBuffer
+
     INGESTION_AVAILABLE = True
 except ImportError:
     INGESTION_AVAILABLE = False
@@ -50,21 +54,23 @@ except ImportError:
     QuarantineBuffer = None
     ReplayTrainer = None
 
+
 # Response models
 class APIResponse(BaseModel):
     success: bool
     message: str = ""
     data: Dict[str, Any] = {}
 
+
 class ErrorResponse(BaseModel):
     success: bool = False
     error: str = ""
     detail: str = ""
 
+
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -98,68 +104,67 @@ cognitive_architecture = None
 async def startup_event():
     """Initialize brain networks and services on startup"""
     global basic_brain, advanced_brain, cognitive_architecture
-    
+
     try:
         logger.info("Initializing Brain Networks...")
-        
+
         # Initialize basic brain network
         simple = SimpleBrainNetwork(num_neurons=100, connectivity_prob=0.05)
         basic_brain = SimpleBrainAdapter(simple)
         logger.info("SimpleBrainNetwork initialized (100 neurons)")
-        
+
         # Initialize advanced cognitive brain network
         cognitive_cfg = CognitiveConfig(max_episodic_memories=200)
         cognitive = CognitiveBrainNetwork(
-            num_neurons=150,
-            connectivity_prob=0.05,
-            config=cognitive_cfg
+            num_neurons=150, connectivity_prob=0.05, config=cognitive_cfg
         )
         advanced_brain = CognitiveBrainAdapter(cognitive)
         logger.info("CognitiveBrainNetwork initialized (150 neurons)")
-        
-        # Initialize CognitiveArchitecture for state/knowledge routes
-        if state is not None:
+
+        # Initialize CognitiveArchitecture for state/knowledge/chat routes
+        if state is not None or chat is not None:
             try:
                 from core.cognitive_architecture import CognitiveArchitecture
                 from core.cognitive_models import CognitiveConfig as CAConfig
-                
+
                 ca_config = CAConfig(max_episodic_memories=200)
                 cognitive_architecture = CognitiveArchitecture(
-                    config=ca_config,
-                    backend_name="numpy"
+                    config=ca_config, backend_name="numpy"
                 )
-                logger.info("CognitiveArchitecture initialized for state/knowledge routes")
+                logger.info("CognitiveArchitecture initialized for state/knowledge/chat routes")
+
+                # Set global instance for chat routes
+                if chat is not None:
+                    chat._cognitive_architecture = cognitive_architecture
             except Exception as e:
                 logger.warning(f"Failed to initialize CognitiveArchitecture: {e}")
                 cognitive_architecture = None
-        
+
         # Initialize ingestion service and replay trainer
         if INGESTION_AVAILABLE and ingest is not None and train_ingest is not None:
             try:
                 storage_type = os.getenv("QUARANTINE_STORAGE", "local")
                 storage_path = os.getenv("QUARANTINE_PATH", "./quarantine")
                 redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
-                
+
                 quarantine_buffer = QuarantineBuffer(
-                    storage_type=storage_type,
-                    storage_path=storage_path,
-                    redis_url=redis_url
+                    storage_type=storage_type, storage_path=storage_path, redis_url=redis_url
                 )
-                
+
                 ingestion_service = IngestionService(quarantine_buffer)
                 replay_trainer = ReplayTrainer(quarantine_buffer, brain_network=simple)
-                
+
                 # Set global instances for dependency injection
                 ingest._ingestion_service = ingestion_service
                 ingest._quarantine_buffer = quarantine_buffer
                 train_ingest._replay_trainer = replay_trainer
-                
+
                 logger.info("Ingestion service and replay trainer initialized")
             except Exception as e:
                 logger.warning(f"Failed to initialize ingestion service: {e}")
-        
+
         logger.info("Brain API startup complete!")
-        
+
     except Exception as e:
         logger.error(f"Failed to initialize brain networks: {e}")
         raise
@@ -208,9 +213,7 @@ app.include_router(training.router, prefix="/training", tags=["Training"])
 # Optional routes
 if automated_training is not None:
     app.include_router(
-        automated_training.router,
-        prefix="/automated-training",
-        tags=["Automated Training"]
+        automated_training.router, prefix="/automated-training", tags=["Automated Training"]
     )
 
 if state is not None and knowledge is not None:
@@ -222,6 +225,10 @@ if state is not None and knowledge is not None:
 if ingest is not None and train_ingest is not None:
     app.include_router(ingest.router, prefix="/ingest", tags=["Ingestion"])
     app.include_router(train_ingest.router, prefix="/train", tags=["Training"])
+
+if chat is not None:
+    app.dependency_overrides[chat.get_cognitive_architecture] = lambda: chat._cognitive_architecture
+    app.include_router(chat.router, prefix="/chat", tags=["Chat"])
 
 
 # Root endpoint
@@ -239,7 +246,9 @@ async def root():
                 "docs": "/docs",
                 "brain_processing": "/brain",
                 "training": "/training",
-                "automated_training": "/automated-training" if automated_training else "not_available",
+                "automated_training": (
+                    "/automated-training" if automated_training else "not_available"
+                ),
                 "state_management": "/state" if state else "not_available",
                 "knowledge_search": "/knowledge" if knowledge else "not_available",
                 "ingestion": "/ingest" if ingest else "not_available",

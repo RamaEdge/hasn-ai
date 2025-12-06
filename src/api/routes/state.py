@@ -4,11 +4,12 @@ State management routes - Save/load brain snapshots
 
 import logging
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Depends
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from ...storage.cognitive_serializer import CognitiveArchitectureSerializer
 from ...core.cognitive_architecture import CognitiveArchitecture
+from ...storage.cognitive_serializer import CognitiveArchitectureSerializer
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -27,7 +28,9 @@ def get_serializer() -> CognitiveArchitectureSerializer:
 
 # Request/Response models
 class SaveStateRequest(BaseModel):
-    snapshot_id: Optional[str] = Field(None, description="Optional snapshot ID (generated if not provided)")
+    snapshot_id: Optional[str] = Field(
+        None, description="Optional snapshot ID (generated if not provided)"
+    )
     description: Optional[str] = Field(None, description="Optional description for the snapshot")
 
 
@@ -62,24 +65,24 @@ async def save_state(
 ):
     """
     Save current cognitive architecture state to snapshot.
-    
+
     Returns snapshot ID for later retrieval.
     """
     try:
         serializer = get_serializer()
-        
+
         snapshot_id = serializer.save(
             architecture=architecture,
             snapshot_id=request.snapshot_id,
             description=request.description,
         )
-        
+
         return SaveStateResponse(
             success=True,
             snapshot_id=snapshot_id,
             message=f"State saved successfully as snapshot '{snapshot_id}'",
         )
-    
+
     except Exception as e:
         logger.error(f"Error saving state: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to save state: {str(e)}")
@@ -92,32 +95,32 @@ async def load_state(
 ):
     """
     Load cognitive architecture state from snapshot.
-    
+
     Restores the architecture to the saved state.
     """
     try:
         serializer = get_serializer()
-        
+
         # Load snapshot into existing architecture
-        restored_architecture = serializer.load(snapshot_id, architecture)
-        
+        serializer.load(snapshot_id, architecture)
+
         # Get snapshot info
         snapshots = serializer.list_snapshots()
         snapshot_info = next((s for s in snapshots if s["snapshot_id"] == snapshot_id), None)
-        
+
         if not snapshot_info:
             snapshot_info = {"snapshot_id": snapshot_id, "status": "loaded"}
-        
+
         return LoadStateResponse(
             success=True,
             message=f"State loaded successfully from snapshot '{snapshot_id}'",
             snapshot_info=snapshot_info,
         )
-    
+
     except FileNotFoundError as e:
         logger.error(f"Snapshot not found: {e}")
         raise HTTPException(status_code=404, detail=f"Snapshot '{snapshot_id}' not found")
-    
+
     except Exception as e:
         logger.error(f"Error loading state: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to load state: {str(e)}")
@@ -131,15 +134,13 @@ async def list_snapshots():
     try:
         serializer = get_serializer()
         snapshots = serializer.list_snapshots()
-        
+
         return ListSnapshotsResponse(
             success=True,
             snapshots=snapshots,
             count=len(snapshots),
         )
-    
+
     except Exception as e:
         logger.error(f"Error listing snapshots: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to list snapshots: {str(e)}")
-
-
