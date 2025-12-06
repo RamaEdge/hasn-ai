@@ -77,9 +77,6 @@ The cognitive demo shows:
 ### Automated Training
 
 ```bash
-# Setup automated training
-python setup_automated_training.py
-
 # Start continuous learning
 python src/training/train_cli.py start --profile production --continuous
 
@@ -159,12 +156,11 @@ Brain State Storage ← HASN Brain Network ← Neural Pattern Converter
 
 ## Documentation
 
-- **[Complete Documentation](docs/INDEX.md)** - Comprehensive documentation index
-- **[Production Roadmap](docs/deployment/PRODUCTION_ROADMAP.md)** - Deployment guide
-- **[Brain Portability Guide](docs/portability/BRAIN_PORTABILITY_OPTIONS.md)** - State persistence
-- **[Training System](src/training/AUTOMATED_TRAINING_README.md)** - Automated learning
-- **[️Architecture Details](docs/architecture/)** - Technical architecture
-- **[Analysis & Comparisons](docs/analysis/)** - Performance analysis
+- **[Documentation Index](docs/INDEX.md)** - Complete documentation navigation
+- **[Architecture Overview](docs/HASN_Architecture_Integrated.md)** - Complete cognitive architecture
+- **[Training Guide](docs/training/TRAINING_INTERACTION_GUIDE.md)** - Interactive training guide
+- **[Hyperparameter Optimization](docs/HYPERPARAMETER_OPTIMIZATION_IMPLEMENTATION.md)** - Learning parameter tuning
+- **[Automated Training](src/training/AUTOMATED_TRAINING_README.md)** - Continuous learning system
 
 ## Applications
 

@@ -25,18 +25,38 @@ network = SimpleBrainNetwork(num_neurons=100, connectivity_prob=0.1)
 #### **Method 1: Pattern-Based Training**
 ```python
 # Define input patterns (which neurons to activate)
-patterns = {
-    "greeting": {0: {i: True for i in range(5)}},          # Module 0, neurons 0-4
-    "question": {1: {i: True for i in range(3, 8)}},       # Module 1, neurons 3-7
-    "concept": {2: {i: True for i in range(7, 12)}}        # Module 2, neurons 7-11
+# Option 1: Flat pattern format (direct neuron IDs)
+patterns_flat = {
+    "greeting": {i: True for i in range(5)},          # Neurons 0-4
+    "question": {i: True for i in range(3, 8)},       # Neurons 3-7
+    "concept": {i: True for i in range(7, 12)}        # Neurons 7-11
 }
 
-# Training loop
-for pattern_name, pattern in patterns.items():
+# Option 2: Nested pattern format (module-based)
+patterns_nested = {
+    "greeting": {0: {i: True for i in range(5)}},     # Module 0, neurons 0-4
+    "question": {1: {i: True for i in range(3, 8)}},  # Module 1, neurons 3-7
+    "concept": {2: {i: True for i in range(7, 12)}}   # Module 2, neurons 7-11
+}
+
+# Training loop with flat patterns (use step)
+for pattern_name, pattern in patterns_flat.items():
     print(f"Training on {pattern_name}")
     
     for iteration in range(20):  # 20 training steps
-        result = network.step(pattern)
+        result = network.step(pattern)  # Returns Dict[int, bool] of spikes
+        
+        # Monitor progress
+        if iteration % 5 == 0:
+            spike_count = sum(result.values())
+            print(f"  Step {iteration}: Spikes={spike_count}")
+
+# Or use process_pattern for nested patterns (returns metrics)
+for pattern_name, pattern in patterns_nested.items():
+    print(f"Training on {pattern_name}")
+    
+    for iteration in range(20):
+        result = network.process_pattern(pattern)  # Returns metrics dict
         
         # Monitor progress
         if iteration % 5 == 0:
@@ -55,8 +75,9 @@ sequence = [
 # Repeat sequence multiple times
 for cycle in range(10):
     for step, pattern in enumerate(sequence):
-        result = network.step(pattern)
-        print(f"Cycle {cycle}, Step {step}: Activity={result['total_activity']:.3f}")
+        spikes = network.step(pattern)  # Returns Dict[int, bool]
+        spike_count = sum(spikes.values())
+        print(f"Cycle {cycle}, Step {step}: Spikes={spike_count}")
 ```
 
 #### **Method 3: Continuous Learning**
@@ -263,14 +284,11 @@ def check_homeostasis(network):
 
 #### **For Larger Networks**
 ```python
-# Create larger, more specialized modules
-large_network = SimpleBrainNetwork([
-    100,  # Sensory processing
-    80,   # Memory/association  
-    60,   # Executive control
-    40,   # Motor output
-    20    # Meta-cognitive
-])
+# Create larger network with more neurons
+large_network = SimpleBrainNetwork(
+    num_neurons=300,  # Total neurons in the network
+    connectivity_prob=0.15  # Higher connectivity for larger networks
+)
 
 # Optimize for performance
 def optimize_training(network):
@@ -305,8 +323,9 @@ word_patterns = {
 # Sequential training
 for epoch in range(10):
     for word, pattern in word_patterns.items():
-        result = network.step(pattern)
-        print(f"Learning '{word}': {result['total_activity']:.3f}")
+        spikes = network.step(pattern)  # Returns Dict[int, bool]
+        spike_count = sum(spikes.values())
+        print(f"Learning '{word}': Spikes={spike_count}")
 ```
 
 #### **Pattern Recognition**
@@ -372,10 +391,14 @@ visual_patterns = {
 
 ##  Quick Start Summary
 
-1. **Create Network**: `network = SimpleBrainNetwork([30, 25, 20, 15])`
-2. **Define Patterns**: `pattern = {0: {i: True for i in range(5)}}`
-3. **Train**: `result = network.step(pattern)` in a loop
-4. **Monitor**: Check `total_activity`, `memory_size`, `attention`
+1. **Create Network**: `network = SimpleBrainNetwork(num_neurons=100, connectivity_prob=0.1)`
+2. **Define Patterns**: 
+   - Flat format: `pattern = {i: True for i in range(5)}` (for `step()`)
+   - Nested format: `pattern = {0: {i: True for i in range(5)}}` (for `process_pattern()`)
+3. **Train**: 
+   - `result = network.step(pattern)` returns `Dict[int, bool]` of spikes
+   - `result = network.process_pattern(pattern)` returns metrics dict with `total_activity`
+4. **Monitor**: Check spike counts or `total_activity`, `memory_size`, `attention`
 5. **Interact**: Convert text/data to patterns and process
 6. **Evaluate**: Test recognition and measure learning metrics
 
