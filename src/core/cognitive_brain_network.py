@@ -97,10 +97,10 @@ class CognitiveBrainNetwork(SimpleBrainNetwork):
         self.consolidation_queue: List[str] = []
         self.memory_access_counts: Dict[str, int] = defaultdict(int)
 
-        print(f"🧠 CognitiveBrainNetwork initialized with {num_neurons} neurons")
-        print(f"   📚 Max episodic memories: {self.config.max_episodic_memories}")
-        print(f"   🔗 Association threshold: {self.config.association_strength_threshold}")
-        print(f"   🎯 Inference depth: {self.config.max_inference_depth}")
+        print(f"CognitiveBrainNetwork initialized with {num_neurons} neurons")
+        print(f"   Max episodic memories: {self.config.max_episodic_memories}")
+        print(f"   Association threshold: {self.config.association_strength_threshold}")
+        print(f"   Inference depth: {self.config.max_inference_depth}")
 
     def store_episodic_memory(self, pattern: Dict[int, bool], context: Dict[str, any]) -> str:
         """Store a new episodic memory with context"""
@@ -130,7 +130,7 @@ class CognitiveBrainNetwork(SimpleBrainNetwork):
         # Manage memory capacity
         self._manage_memory_capacity()
 
-        print(f"📚 Stored episodic memory: {memory_id}")
+        print(f"Stored episodic memory: {memory_id}")
         print(f"   Context: {context}")
         print(f"   Associations found: {len(memory.associations)}")
 
@@ -251,7 +251,7 @@ class CognitiveBrainNetwork(SimpleBrainNetwork):
         if query_context is None:
             query_context = {}
 
-        print("\n🎯 Generating inferences for query...")
+        print("\nGenerating inferences for query...")
 
         # Find relevant memories
         relevant_memories = self._find_relevant_memories(query_pattern, query_context)
@@ -403,7 +403,7 @@ class CognitiveBrainNetwork(SimpleBrainNetwork):
         if not self.consolidation_queue:
             return
 
-        print(f"\n🔄 Consolidating {len(self.consolidation_queue)} memories...")
+        print(f"\nConsolidating {len(self.consolidation_queue)} memories...")
 
         consolidated_count = 0
         for memory_id in self.consolidation_queue[:]:
@@ -414,7 +414,7 @@ class CognitiveBrainNetwork(SimpleBrainNetwork):
         # Clear processed memories from queue
         self.consolidation_queue = []
 
-        print(f"   ✅ Consolidated {consolidated_count} memories")
+        print(f"   Consolidated {consolidated_count} memories")
 
     def _consolidate_single_memory(self, memory_id: str):
         """Consolidate a single memory"""
@@ -437,7 +437,7 @@ class CognitiveBrainNetwork(SimpleBrainNetwork):
                 self.memory_associations[memory_id][assoc_id] = new_strength
                 self.memory_associations[assoc_id][memory_id] = new_strength
 
-        print(f"   🔄 Consolidated {memory_id}: level={memory.consolidation_level:.3f}")
+        print(f"   Consolidated {memory_id}: level={memory.consolidation_level:.3f}")
 
     def _manage_memory_capacity(self):
         """Manage memory capacity by removing weak memories"""
@@ -461,7 +461,7 @@ class CognitiveBrainNetwork(SimpleBrainNetwork):
         for memory_id, _ in memory_scores[:memories_to_remove]:
             self._remove_memory(memory_id)
 
-        print(f"🗑️  Removed {memories_to_remove} weak memories to maintain capacity")
+        print(f"Removed {memories_to_remove} weak memories to maintain capacity")
 
     def _remove_memory(self, memory_id: str):
         """Remove a memory and clean up its associations"""
@@ -494,7 +494,7 @@ class CognitiveBrainNetwork(SimpleBrainNetwork):
         if context:  # Store memory whenever context is provided
             memory_id = self.store_episodic_memory(external_input or spikes, context)
             print(
-                f"   📚 Stored memory: {context.get('concept', context.get('activity', 'unknown'))} (spikes: {spike_count})"
+                f"   Stored memory: {context.get('concept', context.get('activity', 'unknown'))} (spikes: {spike_count})"
             )
         else:
             memory_id = None

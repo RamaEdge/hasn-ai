@@ -64,11 +64,11 @@ class CognitiveArchitecture:
         self.current_state = CognitiveState()
         self.processing_history = []
         
-        print(f"🧠 Cognitive Architecture initialized")
-        print(f"   🔧 Backend: {self.backend.backend_name}")
-        print(f"   🧬 Neurons: {self.backend.num_neurons}")
-        print(f"   📚 Max episodic memories: {self.config.max_episodic_memories}")
-        print(f"   💭 Max working memory items: {self.config.max_working_memory_items}")
+        print(f"Cognitive Architecture initialized")
+        print(f"   Backend: {self.backend.backend_name}")
+        print(f"   Neurons: {self.backend.num_neurons}")
+        print(f"   Max episodic memories: {self.config.max_episodic_memories}")
+        print(f"   Max working memory items: {self.config.max_working_memory_items}")
     
     def process_input(self, input_data: Union[str, List[float]], context: Dict[str, Any] = None) -> Dict[str, Any]:
         """Process input through the complete cognitive pipeline"""
@@ -78,7 +78,7 @@ class CognitiveArchitecture:
         start_time = time.time()
         processing_id = str(uuid.uuid4())
         
-        print(f"🔄 Processing input: {processing_id}")
+        print(f"Processing input: {processing_id}")
         
         # 1. Sensory encoding
         if isinstance(input_data, str):
@@ -88,7 +88,7 @@ class CognitiveArchitecture:
             spike_pattern = self.sensory_layer.encode_embedding_to_spikes(input_data)
             input_type = "embedding"
         
-        print(f"   🎯 Sensory encoding: {sum(spike_pattern.values())} spikes")
+        print(f"   Sensory encoding: {sum(spike_pattern.values())} spikes")
         
         # 2. Associative learning
         self.associative_layer.update_associations(spike_pattern, time.time())
@@ -147,15 +147,15 @@ class CognitiveArchitecture:
             
             # Debug output
             if consolidation_result.get("consolidated"):
-                print(f"   🧠 Consolidation successful: {consolidation_result['concept']}")
+                print(f"   Consolidation successful: {consolidation_result['concept']}")
             else:
-                print(f"   ⚠️  Consolidation failed: {consolidation_result.get('reason', 'unknown')}")
+                print(f"   Warning: Consolidation failed: {consolidation_result.get('reason', 'unknown')}")
         
         # Update system state
         self._update_system_state(result)
         
-        print(f"   ✅ Processing complete: {result['processing_time']:.3f}s")
-        print(f"   🎯 Decision: {arbitration_decision}")
+        print(f"   Processing complete: {result['processing_time']:.3f}s")
+        print(f"   Decision: {arbitration_decision}")
         
         return result
     
@@ -292,7 +292,7 @@ class CognitiveArchitecture:
             "processing_results": results
         }
         
-        print(f"   ✅ Cat example complete:")
+        print(f"   Cat example complete:")
         print(f"      Exposures: {demo_result['exposures']}")
         print(f"      Consolidated: {demo_result['consolidation_occurred']}")
         

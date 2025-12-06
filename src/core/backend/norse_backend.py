@@ -37,7 +37,7 @@ class NorseBackend(BrainBackend):
         self._norse_available = self._check_norse_availability()
         
         if not self._norse_available:
-            print("⚠️  Norse library not available. NorseBackend is not functional.")
+            print("Warning: Norse library not available. NorseBackend is not functional.")
     
     def _check_norse_availability(self) -> bool:
         """

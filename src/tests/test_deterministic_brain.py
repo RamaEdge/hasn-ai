@@ -81,7 +81,7 @@ class TestDeterministicBrainNetwork:
         assert all(isinstance(k, int) for k in expected_output.keys()), "Output keys should be integers"
         assert all(isinstance(v, bool) for v in expected_output.values()), "Output values should be booleans"
         
-        print(f"✅ Deterministic spike pattern test passed")
+        print(f" Deterministic spike pattern test passed")
         print(f"   Input pattern: {input_pattern}")
         print(f"   Expected output: {expected_output}")
     
@@ -109,7 +109,7 @@ class TestDeterministicBrainNetwork:
         # Both networks should produce identical outputs after identical training
         assert outputs_after_training[0] == outputs_after_training[1], "Learning should be deterministic"
         
-        print(f"✅ Deterministic learning test passed")
+        print(f" Deterministic learning test passed")
         print(f"   Training pattern: {training_pattern}")
         print(f"   Output after training: {outputs_after_training[0]}")
     
@@ -142,7 +142,7 @@ class TestDeterministicBrainNetwork:
         
         assert raster_data == raster_data2, "Raster data should be deterministic"
         
-        print(f"✅ Deterministic raster plot test passed")
+        print(f" Deterministic raster plot test passed")
         print(f"   Raster data shape: {len(raster_data)} timesteps")
         print(f"   Sample timestep: {raster_data[0]}")
     
@@ -176,7 +176,7 @@ class TestDeterministicBrainNetwork:
         
         assert output1 == output2, "Networks with identical configs should produce identical outputs"
         
-        print(f"✅ Network config determinism test passed")
+        print(f" Network config determinism test passed")
     
     def test_known_spike_pattern_validation(self):
         """Test with a known, validated spike pattern."""
@@ -211,7 +211,7 @@ class TestDeterministicBrainNetwork:
         # Note: It's possible to have 0 active neurons in the first step
         # The important thing is that the output is deterministic
         
-        print(f"✅ Known spike pattern validation passed")
+        print(f" Known spike pattern validation passed")
         print(f"   Input: {known_input}")
         print(f"   Output: {output}")
         print(f"   Active neurons: {active_neurons}")
@@ -226,21 +226,21 @@ def test_full_deterministic_pipeline():
     setup_logging(level="INFO", format_type="json")
     logger = get_logger(__name__)
     
-    logger.info("🧠 Starting deterministic pipeline test")
+    logger.info("Starting deterministic pipeline test")
     
     # Seed all random generators
     seed_value = seed_random_generators(42, deterministic=True)
-    logger.info("🔧 Seeded random generators", extra={"seed": seed_value})
+    logger.info("Seeded random generators", extra={"seed": seed_value})
     
     # Create brain network
     brain = SimpleBrainNetwork(num_neurons=12, connectivity_prob=0.2)
-    logger.info("🧠 Brain network created", extra={"neurons": brain.num_neurons})
+    logger.info("Brain network created", extra={"neurons": brain.num_neurons})
     
     # Process known input
     input_pattern = {0: True, 3: True, 6: True}
     output = brain.step(input_pattern)
     
-    logger.info("📊 Brain processing completed", extra={
+    logger.info("Brain processing completed", extra={
         "input_spikes": sum(input_pattern.values()),
         "output_spikes": sum(output.values())
     })
@@ -252,7 +252,7 @@ def test_full_deterministic_pipeline():
     
     assert output == output2, "Full pipeline should be deterministic"
     
-    logger.info("✅ Deterministic pipeline test passed")
+    logger.info("Deterministic pipeline test passed")
 
 
 if __name__ == "__main__":
@@ -272,4 +272,4 @@ if __name__ == "__main__":
     result = test_full_deterministic_pipeline()
     print(f"\nFull pipeline test result: {result}")
     
-    print("\n✅ All deterministic tests passed!")
+    print("\n All deterministic tests passed!")

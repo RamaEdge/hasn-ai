@@ -27,7 +27,7 @@ try:
     from core.simplified_brain_network import SimpleBrainNetwork
     from training.interactive_brain_trainer import InteractiveBrainTrainer
 except ImportError:
-    print("⚠️  Brain modules not found. Make sure you're running from the correct directory.")
+    print("Warning: Brain modules not found. Make sure you're running from the correct directory.")
     sys.exit(1)
 
 
@@ -326,7 +326,7 @@ class WebContentCollector:
         """Collect content from all configured sources"""
         all_articles = []
 
-        self.logger.info("🔍 Starting content collection from internet sources...")
+        self.logger.info(" Starting content collection from internet sources...")
 
         # Collect from different sources
         tasks = [
@@ -354,7 +354,7 @@ class WebContentCollector:
         unique_articles = self._remove_duplicates(quality_articles)
 
         self.logger.info(
-            f"📊 Collected {len(unique_articles)} quality articles from {len(all_articles)} total"
+            f" Collected {len(unique_articles)} quality articles from {len(all_articles)} total"
         )
 
         return unique_articles[: self.config.max_articles_per_session]
@@ -613,7 +613,7 @@ class AutomatedInternetTrainer:
     async def start_training(self, continuous: bool = True):
         """Start the automated training process"""
         self.training_active = True
-        self.logger.info("🧠 Starting Automated Internet Training...")
+        self.logger.info(" Starting Automated Internet Training...")
 
         async with WebContentCollector(self.config) as collector:
             self.collector = collector
@@ -625,9 +625,9 @@ class AutomatedInternetTrainer:
                     await self._single_training_session()
 
             except KeyboardInterrupt:
-                self.logger.info("🛑 Training interrupted by user")
+                self.logger.info(" Training interrupted by user")
             except Exception as e:
-                self.logger.error(f"❌ Training error: {e}")
+                self.logger.error(f" Training error: {e}")
             finally:
                 await self._save_training_state()
                 self.training_active = False
@@ -669,7 +669,7 @@ class AutomatedInternetTrainer:
                 await asyncio.sleep(self.config.collection_interval)
 
             except Exception as e:
-                self.logger.error(f"❌ Error in training loop: {e}")
+                self.logger.error(f" Error in training loop: {e}")
                 await asyncio.sleep(60)  # Wait before retrying
 
     async def _single_training_session(self):
@@ -725,20 +725,20 @@ class AutomatedInternetTrainer:
 
                 # Log interesting brain states
                 if brain_result.get("total_activity", 0) > 0.8:
-                    self.logger.info(f"🔥 High brain activity for concept: {concept}")
+                    self.logger.info(f" High brain activity for concept: {concept}")
 
                 # Small delay to prevent overwhelming
                 await asyncio.sleep(0.1)
 
             except Exception as e:
-                self.logger.warning(f"⚠️  Error training on objective: {e}")
+                self.logger.warning(f"Warning: Error training on objective: {e}")
 
     def _log_training_progress(self):
         """Log current training progress and metrics"""
         metrics = self.training_metrics
         avg_quality = np.mean(list(metrics["quality_scores"])) if metrics["quality_scores"] else 0.0
 
-        self.logger.info("📊 Training Progress:")
+        self.logger.info(" Training Progress:")
         self.logger.info(f"   Total Articles: {metrics['articles_collected']}")
         self.logger.info(f"   Patterns Learned: {metrics['patterns_learned']}")
         self.logger.info(f"   Concepts Discovered: {metrics['concepts_discovered']}")
@@ -792,10 +792,10 @@ class AutomatedInternetTrainer:
                 json.dump(metrics_data, f, indent=2, default=str)
 
             self.training_metrics["last_save_time"] = time.time()
-            self.logger.info(f"💾 Training state saved at {timestamp}")
+            self.logger.info(f" Training state saved at {timestamp}")
 
         except Exception as e:
-            self.logger.error(f"❌ Error saving training state: {e}")
+            self.logger.error(f" Error saving training state: {e}")
 
     async def load_training_state(self, state_file: str):
         """Load previous training state"""
@@ -819,7 +819,7 @@ class AutomatedInternetTrainer:
             self.logger.info(f"📂 Training state loaded from: {state_file}")
 
         except Exception as e:
-            self.logger.error(f"❌ Error loading training state: {e}")
+            self.logger.error(f" Error loading training state: {e}")
 
     def get_knowledge_summary(self) -> Dict[str, Any]:
         """Get a summary of learned knowledge"""
@@ -837,7 +837,7 @@ class AutomatedInternetTrainer:
 
 async def main():
     """Main function to demonstrate automated internet training"""
-    print("🧠 HASN Automated Internet Training System")
+    print(" HASN Automated Internet Training System")
     print("=" * 50)
 
     # Create configuration
@@ -851,7 +851,7 @@ async def main():
     # Create trainer
     trainer = AutomatedInternetTrainer(config)
 
-    print("🚀 Starting automated training...")
+    print(" Starting automated training...")
     print("   This will continuously collect information from the internet")
     print("   and train the HASN brain network on it.")
     print("   Press Ctrl+C to stop training and save state.")
@@ -862,7 +862,7 @@ async def main():
 
     # Show knowledge summary
     summary = trainer.get_knowledge_summary()
-    print("\n📊 Knowledge Summary:")
+    print("\n Knowledge Summary:")
     print(f"   Concepts learned: {summary['total_concepts']}")
     print(f"   Total patterns: {summary['trainer_patterns']}")
 

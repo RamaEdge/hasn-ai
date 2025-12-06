@@ -136,12 +136,12 @@ def main():
     print(f"Simplified network generated {simp_spikes} spikes")
 
     if orig_spikes == 0 and simp_spikes == 0:
-        print("❌ ISSUE: Neither network is generating spikes")
+        print(" ISSUE: Neither network is generating spikes")
         print("   This suggests parameter or input issues")
     elif orig_spikes > 0 and simp_spikes > 0:
-        print("✅ Both networks are functional")
+        print(" Both networks are functional")
     else:
-        print("⚠️  Only one network is generating spikes")
+        print("Warning: Only one network is generating spikes")
 
 
 if __name__ == "__main__":

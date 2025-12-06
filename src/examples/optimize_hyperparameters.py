@@ -16,14 +16,14 @@ from core.cognitive_models import CognitiveConfig
 
 def main():
     """Run hyperparameter optimization example"""
-    print("🔍 Hyperparameter Optimization Example")
+    print(" Hyperparameter Optimization Example")
     print("=" * 60)
     
     # Create optimizer
     optimizer = HyperparameterOptimizer()
     
     # Create synthetic training dataset
-    print("\n📊 Creating synthetic training dataset...")
+    print("\n Creating synthetic training dataset...")
     training_data = optimizer.create_synthetic_dataset(
         num_concepts=15,
         samples_per_concept=4,
@@ -39,7 +39,7 @@ def main():
     print(f"   Validation samples: {len(validation_data)}")
     
     # Run optimization (small number of trials for demo)
-    print("\n🚀 Starting optimization...")
+    print("\n Starting optimization...")
     print("   This will take a few minutes...")
     
     study, best_config = optimizer.optimize(
@@ -52,7 +52,7 @@ def main():
     )
     
     # Display results
-    print("\n📈 Optimization Results:")
+    print("\n Optimization Results:")
     print("=" * 60)
     print(f"Best Trial: {study.best_trial.number}")
     print(f"Best Score: {study.best_value:.4f}")
@@ -61,7 +61,7 @@ def main():
         print(f"  {param}: {value:.4f}" if isinstance(value, float) else f"  {param}: {value}")
     
     # Compare with default config
-    print("\n📊 Comparison with Default Config:")
+    print("\n Comparison with Default Config:")
     default_config = CognitiveConfig()
     
     key_params = [
@@ -81,12 +81,12 @@ def main():
         
         print(f"{param:<40} {default_val:<15.4f} {optimized_val:<15.4f} {change_pct:+.1f}%")
     
-    print("\n✅ Optimization complete!")
+    print("\n Optimization complete!")
     print(f"   Best config saved to: optimization_studies/demo_optimization_best_config.json")
     print(f"   Study database: optimization_studies/demo_optimization.db")
     
     # Show how to use optimized config
-    print("\n💡 Usage:")
+    print("\n Usage:")
     print("   from training.hyperparameter_optimizer import HyperparameterOptimizer")
     print("   optimizer = HyperparameterOptimizer()")
     print("   best_config = optimizer.load_config('demo_optimization')")
