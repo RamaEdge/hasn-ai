@@ -134,7 +134,7 @@ async def startup_event():
                 cognitive_architecture = None
         
         # Initialize ingestion service and replay trainer
-        if INGESTION_AVAILABLE and ingest is not None:
+        if INGESTION_AVAILABLE and ingest is not None and train_ingest is not None:
             try:
                 storage_type = os.getenv("QUARANTINE_STORAGE", "local")
                 storage_path = os.getenv("QUARANTINE_PATH", "./quarantine")
