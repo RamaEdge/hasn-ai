@@ -496,7 +496,7 @@ def demo_configurable_network():
 
 if __name__ == "__main__":
     # Run demonstrations
-    print("🧠 Testing SimpleBrainNetwork Configurations")
+    print("Testing SimpleBrainNetwork Configurations")
     print("=" * 50)
 
     # Default configuration demo
@@ -506,7 +506,7 @@ if __name__ == "__main__":
     network2, results2 = demo_configurable_network()
 
     print("\n" + "=" * 50)
-    print("🎯 Configuration Comparison:")
+    print("Configuration Comparison:")
     spikes1 = len(results1["spike_record"])
     spikes2 = len(results2["spike_record"])
     print(f"Default network: {spikes1} spikes")
@@ -519,10 +519,10 @@ if __name__ == "__main__":
         print("Networks need stronger input to generate spikes - configurations ready!")
 
     # Show that configurations are working
-    print("\n🔧 Configuration Details:")
+    print("\nConfiguration Details:")
     print(f"Default learning rate: {network1.config.learning_rate}")
     print(f"Fast learning rate: {network2.config.learning_rate}")
     print(f"Default attention modules: {network1.config.num_attention_modules}")
     print(f"Fast attention modules: {network2.config.num_attention_modules}")
 
-    print("\n✅ All configurations working! No more hardcoded values! 🎉")
+    print("\nAll configurations working! No more hardcoded values!")

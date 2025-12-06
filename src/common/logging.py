@@ -28,10 +28,7 @@ class StructuredFormatter(logging.Formatter):
             "line": record.lineno,
         }
         
-        # Add emoji indicator based on logger name or message content
-        emoji = self._get_emoji_indicator(record)
-        if emoji:
-            log_entry["emoji"] = emoji
+        # Emoji indicators removed - no longer adding emojis to logs
         
         # Add exception info if present
         if record.exc_info:
@@ -51,46 +48,10 @@ class StructuredFormatter(logging.Formatter):
         return json.dumps(log_entry, default=str)
     
     def _get_emoji_indicator(self, record: logging.LogRecord) -> Optional[str]:
-        """Get emoji indicator based on logger name or message content."""
-        message = record.getMessage().lower()
-        logger_name = record.name.lower()
+        """Get emoji indicator based on logger name or message content.
         
-        # Brain network indicators
-        if any(keyword in logger_name for keyword in ["brain", "neural", "network"]):
-            return "🧠"
-        if any(keyword in message for keyword in ["brain", "neural", "neuron", "spike"]):
-            return "🧠"
-        
-        # API indicators
-        if any(keyword in logger_name for keyword in ["api", "route", "endpoint"]):
-            return "🚀"
-        if any(keyword in message for keyword in ["api", "endpoint", "request", "response"]):
-            return "🚀"
-        
-        # Training indicators
-        if any(keyword in logger_name for keyword in ["train", "learning", "automated"]):
-            return "📊"
-        if any(keyword in message for keyword in ["train", "learn", "training", "epoch"]):
-            return "📊"
-        
-        # Configuration indicators
-        if any(keyword in logger_name for keyword in ["config", "setup", "init"]):
-            return "🔧"
-        if any(keyword in message for keyword in ["config", "setup", "initialize", "init"]):
-            return "🔧"
-        
-        # Success indicators
-        if record.levelno == logging.INFO and any(keyword in message for keyword in ["success", "complete", "done", "ready"]):
-            return "✅"
-        
-        # Warning indicators
-        if record.levelno == logging.WARNING:
-            return "⚠️"
-        
-        # Error indicators
-        if record.levelno >= logging.ERROR:
-            return "❌"
-        
+        Deprecated: Emoji indicators removed. This method returns None.
+        """
         return None
 
 
@@ -147,7 +108,7 @@ def setup_logging(
     
     # Log the setup
     logger = logging.getLogger(__name__)
-    logger.info("🔧 Logging system initialized", extra={
+    logger.info("Logging system initialized", extra={
         "level": level,
         "format": format_type,
         "console_enabled": enable_console,

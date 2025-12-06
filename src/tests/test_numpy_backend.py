@@ -376,7 +376,7 @@ class TestToyExample:
         summary = backend.get_activity_summary()
         assert summary["current_time"] == 7.0  # 7 steps total
         
-        print("✅ 10-neuron toy example test passed")
+        print(" 10-neuron toy example test passed")
         print(f"   Network info: {backend.get_network_info()}")
         print(f"   Activity summary: {summary}")
 
@@ -432,4 +432,4 @@ if __name__ == "__main__":
     # Test backend switching
     test_backend_switching()
     
-    print("\n✅ All NumPy backend tests passed!")
+    print("\n All NumPy backend tests passed!")

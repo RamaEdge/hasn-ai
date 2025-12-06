@@ -56,9 +56,9 @@ class NetworkComparator:
                 num_neurons=num_neurons, connectivity_prob=0.1
             )
             networks["simplified_creation_time"] = time.time() - start_time
-            print(f"    ✅ Created in {networks['simplified_creation_time']:.3f}s")
+            print(f"     Created in {networks['simplified_creation_time']:.3f}s")
         except Exception as e:
-            print(f"    ❌ Failed: {e}")
+            print(f"     Failed: {e}")
             networks["simplified"] = None
 
         # 2. Cognitive Brain Network
@@ -69,9 +69,9 @@ class NetworkComparator:
                 num_neurons=num_neurons, connectivity_prob=0.1, config=CognitiveConfig()
             )
             networks["advanced_creation_time"] = time.time() - start_time
-            print(f"    ✅ Created in {networks['advanced_creation_time']:.3f}s")
+            print(f"     Created in {networks['advanced_creation_time']:.3f}s")
         except Exception as e:
-            print(f"    ❌ Failed: {e}")
+            print(f"     Failed: {e}")
             networks["advanced"] = None
 
         # 3. Optimized network not present in codebase
@@ -150,14 +150,14 @@ class NetworkComparator:
                 }
             )
 
-            print(f"    ✅ Completed in {execution_time:.3f}s")
+            print(f"     Completed in {execution_time:.3f}s")
             print(f"       Speed: {steps_per_second:.1f} steps/sec")
             print(f"       Memory: {memory_mb:.1f} MB")
             print(f"       Spikes: {spikes_recorded}")
 
         except Exception as e:
             results["error"] = str(e)
-            print(f"    ❌ Failed: {e}")
+            print(f"     Failed: {e}")
             tracemalloc.stop()
 
         return results
@@ -250,7 +250,7 @@ class NetworkComparator:
                 performance_results[test_name.lower()][network_name] = result
 
         # Analyze functionality
-        print("\n🔍 Functionality Analysis:")
+        print("\n Functionality Analysis:")
         functionality_analysis = self.analyze_functionality(networks)
 
         # Generate recommendations
@@ -268,7 +268,7 @@ class NetworkComparator:
 
     def generate_recommendations(self, performance: Dict, functionality: Dict) -> Dict[str, Any]:
         """Generate recommendations based on test results"""
-        print("\n📊 Generating Recommendations...")
+        print("\n Generating Recommendations...")
 
         # Calculate average performance scores
         performance_scores = {}
@@ -366,16 +366,16 @@ def main():
 
     rec = results["recommendations"]["recommendation"]
     if rec:
-        print("🎯 RECOMMENDED ACTION:")
+        print(" RECOMMENDED ACTION:")
         print(f"   KEEP: {rec['keep']}")
         print(f"   REMOVE: {', '.join(rec['remove'])}")
         print(f"   REASON: {rec['reason']}")
 
-        print("\n📊 PERFORMANCE SCORES:")
+        print("\n PERFORMANCE SCORES:")
         for network, score in results["recommendations"]["performance_scores"].items():
             print(f"   {network}: {score:.1f}")
 
-        print("\n🔧 FUNCTIONALITY SCORES:")
+        print("\n FUNCTIONALITY SCORES:")
         for network, score in results["recommendations"]["functionality_scores"].items():
             print(f"   {network}: {score}")
 

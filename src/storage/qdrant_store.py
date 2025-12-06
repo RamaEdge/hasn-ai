@@ -57,7 +57,7 @@ class QdrantStore:
         # Ensure collection exists
         self._ensure_collection()
         
-        print(f"🔍 Qdrant store initialized: {self.url}")
+        print(f" Qdrant store initialized: {self.url}")
         print(f"   Collection: {self.COLLECTION_NAME}")
     
     def _ensure_collection(self):
@@ -73,9 +73,9 @@ class QdrantStore:
                     distance=Distance.COSINE,
                 ),
             )
-            print(f"✅ Created collection: {self.COLLECTION_NAME}")
+            print(f" Created collection: {self.COLLECTION_NAME}")
         else:
-            print(f"✅ Collection exists: {self.COLLECTION_NAME}")
+            print(f" Collection exists: {self.COLLECTION_NAME}")
     
     def upsert_semantic_memory(
         self,

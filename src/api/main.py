@@ -7,54 +7,50 @@ import logging
 import os
 import sys
 from datetime import datetime
+from typing import Dict, Any, Optional
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
 # Add src to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-"""Production FastAPI that wires both Simple and Cognitive networks via DI."""
-
-# Import brain components
-try:
-    from core.cognitive_brain_network import CognitiveBrainNetwork, CognitiveConfig
-    from core.simplified_brain_network import SimpleBrainNetwork
-except ImportError:
-    # Fallback imports with adjusted paths
-    brain_core_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "core")
-    sys.path.append(brain_core_path)
-    try:
-        from cognitive_brain_network import CognitiveBrainNetwork, CognitiveConfig
-        from simplified_brain_network import SimpleBrainNetwork
-    except ImportError:
-        raise
-
-from api.routes import brain, health, training
-
-try:
-    from api.routes import automated_training
-
-    AUTOMATED_TRAINING_AVAILABLE = True
-except ImportError:
-    AUTOMATED_TRAINING_AVAILABLE = False
-    print("⚠️  Automated training routes not available")
-
-try:
-    from api.routes import state, knowledge
-    STATE_ROUTES_AVAILABLE = True
-except ImportError:
-    STATE_ROUTES_AVAILABLE = False
-    print("⚠️  State/knowledge routes not available")
-
+# Core imports
+from core.cognitive_brain_network import CognitiveBrainNetwork, CognitiveConfig
+from core.simplified_brain_network import SimpleBrainNetwork
 from api.adapters.brain_adapters import CognitiveBrainAdapter, SimpleBrainAdapter
 from api.middleware.rate_limit import RateLimitMiddleware
-from pydantic import BaseModel
-from typing import Dict, Any
+from api.routes import brain, health, training
 
-# Simple response models
+# Optional route imports
+def _import_optional_route(module_name: str):
+    """Helper to import optional route modules"""
+    try:
+        return __import__(f"api.routes.{module_name}", fromlist=[module_name])
+    except ImportError:
+        return None
+
+automated_training = _import_optional_route("automated_training")
+state = _import_optional_route("state")
+knowledge = _import_optional_route("knowledge")
+ingest = _import_optional_route("ingest")
+train_ingest = _import_optional_route("train_ingest")
+
+# Optional ingestion imports
+try:
+    from ingestion.service import IngestionService, QuarantineBuffer
+    from ingestion.replay_trainer import ReplayTrainer
+    INGESTION_AVAILABLE = True
+except ImportError:
+    INGESTION_AVAILABLE = False
+    IngestionService = None
+    QuarantineBuffer = None
+    ReplayTrainer = None
+
+# Response models
 class APIResponse(BaseModel):
     success: bool
     message: str = ""
@@ -67,7 +63,8 @@ class ErrorResponse(BaseModel):
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -81,7 +78,7 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
-# CORS middleware
+# Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Configure for production: ["https://yourdomain.com"]
@@ -89,94 +86,117 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
+app.add_middleware(RateLimitMiddleware, calls=100, period=60)
 
-# Rate limiting middleware
-app.add_middleware(RateLimitMiddleware, calls=100, period=60)  # 100 calls per minute
-
-# Adapters moved to api.adapters.brain_adapters for clarity
-
-
-# Global brain instances
-basic_brain: SimpleBrainAdapter | None = None
-advanced_brain: CognitiveBrainAdapter | None = None
-
-# Global cognitive architecture instance (for state/knowledge routes)
+# Global instances
+basic_brain: Optional[SimpleBrainAdapter] = None
+advanced_brain: Optional[CognitiveBrainAdapter] = None
 cognitive_architecture = None
 
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize brain networks on startup"""
+    """Initialize brain networks and services on startup"""
     global basic_brain, advanced_brain, cognitive_architecture
-
+    
     try:
-        logger.info("🧠 Initializing Brain Networks...")
-
-        # Initialize basic (simplified) brain network
+        logger.info("Initializing Brain Networks...")
+        
+        # Initialize basic brain network
         simple = SimpleBrainNetwork(num_neurons=100, connectivity_prob=0.05)
         basic_brain = SimpleBrainAdapter(simple)
-        logger.info("✅ SimpleBrainNetwork initialized (100 neurons)")
-
+        logger.info("SimpleBrainNetwork initialized (100 neurons)")
+        
         # Initialize advanced cognitive brain network
         cognitive_cfg = CognitiveConfig(max_episodic_memories=200)
         cognitive = CognitiveBrainNetwork(
-            num_neurons=150, connectivity_prob=0.05, config=cognitive_cfg
+            num_neurons=150,
+            connectivity_prob=0.05,
+            config=cognitive_cfg
         )
         advanced_brain = CognitiveBrainAdapter(cognitive)
-        logger.info("✅ CognitiveBrainNetwork initialized (150 neurons)")
-
+        logger.info("CognitiveBrainNetwork initialized (150 neurons)")
+        
         # Initialize CognitiveArchitecture for state/knowledge routes
-        if STATE_ROUTES_AVAILABLE:
+        if state is not None:
             try:
                 from core.cognitive_architecture import CognitiveArchitecture
                 from core.cognitive_models import CognitiveConfig as CAConfig
                 
                 ca_config = CAConfig(max_episodic_memories=200)
-                cognitive_architecture = CognitiveArchitecture(config=ca_config, backend_name="numpy")
-                logger.info("✅ CognitiveArchitecture initialized for state/knowledge routes")
+                cognitive_architecture = CognitiveArchitecture(
+                    config=ca_config,
+                    backend_name="numpy"
+                )
+                logger.info("CognitiveArchitecture initialized for state/knowledge routes")
             except Exception as e:
-                logger.warning(f"⚠️  Failed to initialize CognitiveArchitecture: {e}")
+                logger.warning(f"Failed to initialize CognitiveArchitecture: {e}")
                 cognitive_architecture = None
-
-        logger.info("🚀 Brain API startup complete!")
-
+        
+        # Initialize ingestion service and replay trainer
+        if INGESTION_AVAILABLE and ingest is not None:
+            try:
+                storage_type = os.getenv("QUARANTINE_STORAGE", "local")
+                storage_path = os.getenv("QUARANTINE_PATH", "./quarantine")
+                redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+                
+                quarantine_buffer = QuarantineBuffer(
+                    storage_type=storage_type,
+                    storage_path=storage_path,
+                    redis_url=redis_url
+                )
+                
+                ingestion_service = IngestionService(quarantine_buffer)
+                replay_trainer = ReplayTrainer(quarantine_buffer, brain_network=simple)
+                
+                # Set global instances for dependency injection
+                ingest._ingestion_service = ingestion_service
+                ingest._quarantine_buffer = quarantine_buffer
+                train_ingest._replay_trainer = replay_trainer
+                
+                logger.info("Ingestion service and replay trainer initialized")
+            except Exception as e:
+                logger.warning(f"Failed to initialize ingestion service: {e}")
+        
+        logger.info("Brain API startup complete!")
+        
     except Exception as e:
-        logger.error(f"❌ Failed to initialize brain networks: {e}")
+        logger.error(f"Failed to initialize brain networks: {e}")
         raise
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
-    logger.info("🛑 Shutting down Brain API...")
-    # Add cleanup logic here if needed
+    logger.info("Shutting down Brain API...")
 
 
-# Dependency to get brain instances
+# Dependency injection functions
 def get_brain_network():
+    """Get basic brain network instance"""
     if basic_brain is None:
         raise HTTPException(status_code=503, detail="Brain network not initialized")
     return basic_brain
 
 
 def get_advanced_brain():
+    """Get advanced brain network instance"""
     if advanced_brain is None:
         raise HTTPException(status_code=503, detail="Advanced brain not initialized")
     return advanced_brain
 
 
 def get_cognitive_architecture():
-    """Get cognitive architecture instance for state/knowledge routes"""
-    global cognitive_architecture
+    """Get cognitive architecture instance"""
     if cognitive_architecture is None:
         raise HTTPException(status_code=503, detail="Cognitive architecture not initialized")
     return cognitive_architecture
 
 
-# Include routers
+# Register routes
 app.include_router(health.router, prefix="/health", tags=["Health"])
 
-# Wire dependencies for route modules via FastAPI overrides
+# Wire dependencies for brain routes
 app.dependency_overrides[brain.get_brain_network] = get_brain_network
 app.dependency_overrides[brain.get_advanced_brain] = get_advanced_brain
 app.dependency_overrides[training.get_brain_network] = get_brain_network
@@ -185,20 +205,23 @@ app.dependency_overrides[training.get_advanced_brain] = get_advanced_brain
 app.include_router(brain.router, prefix="/brain", tags=["Brain Processing"])
 app.include_router(training.router, prefix="/training", tags=["Training"])
 
-# Include automated training router if available
-if AUTOMATED_TRAINING_AVAILABLE:
+# Optional routes
+if automated_training is not None:
     app.include_router(
         automated_training.router,
         prefix="/automated-training",
-        tags=["Automated Training"],
+        tags=["Automated Training"]
     )
 
-# Include state and knowledge routes if available
-if STATE_ROUTES_AVAILABLE:
+if state is not None and knowledge is not None:
     app.dependency_overrides[state.get_cognitive_architecture] = get_cognitive_architecture
     app.dependency_overrides[knowledge.get_cognitive_architecture] = get_cognitive_architecture
     app.include_router(state.router, prefix="/state", tags=["State Management"])
     app.include_router(knowledge.router, prefix="/knowledge", tags=["Knowledge Search"])
+
+if ingest is not None and train_ingest is not None:
+    app.include_router(ingest.router, prefix="/ingest", tags=["Ingestion"])
+    app.include_router(train_ingest.router, prefix="/train", tags=["Training"])
 
 
 # Root endpoint
@@ -216,11 +239,11 @@ async def root():
                 "docs": "/docs",
                 "brain_processing": "/brain",
                 "training": "/training",
-                "automated_training": (
-                    "/automated-training" if AUTOMATED_TRAINING_AVAILABLE else "not_available"
-                ),
-                "state_management": "/state" if STATE_ROUTES_AVAILABLE else "not_available",
-                "knowledge_search": "/knowledge" if STATE_ROUTES_AVAILABLE else "not_available",
+                "automated_training": "/automated-training" if automated_training else "not_available",
+                "state_management": "/state" if state else "not_available",
+                "knowledge_search": "/knowledge" if knowledge else "not_available",
+                "ingestion": "/ingest" if ingest else "not_available",
+                "training_pipeline": "/train" if train_ingest else "not_available",
             },
             "timestamp": datetime.now().isoformat(),
         },
@@ -238,10 +261,9 @@ async def global_exception_handler(request, exc):
             success=False,
             error="Internal server error",
             detail=str(exc) if app.debug else "An unexpected error occurred",
-        ).dict(),
+        ).model_dump(),
     )
 
 
 if __name__ == "__main__":
-    # Development server
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, log_level="info")
