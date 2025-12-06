@@ -36,6 +36,11 @@ class NumpyBackend(BrainBackend):
         self.threshold = kwargs.get('threshold', 1.0)  # Spike threshold
         self.reset_potential = kwargs.get('reset_potential', 0.0)  # Reset potential
         
+        # Learning parameters (configurable)
+        self.background_noise_level = kwargs.get('background_noise_level', 0.01)
+        self.min_weight_bound = kwargs.get('min_weight_bound', 0.0)
+        self.max_weight_bound = kwargs.get('max_weight_bound', 2.0)
+        
         # Initialize neuron states
         self.membrane_potentials = np.zeros(num_neurons, dtype=np.float32)
         self.last_spike_times = np.full(num_neurons, -1000.0, dtype=np.float32)
@@ -101,8 +106,8 @@ class NumpyBackend(BrainBackend):
         # For now, use a simple approach with random background activity
         synaptic_currents = np.dot(self.weights, self.spike_states.astype(np.float32))
         
-        # Add small background noise to prevent complete stillness
-        background_noise = np.random.normal(0, 0.01, self.num_neurons)
+        # Add small background noise to prevent complete stillness (configurable)
+        background_noise = np.random.normal(0, self.background_noise_level, self.num_neurons)
         
         # Total input current
         total_currents = self.input_currents + synaptic_currents + background_noise
@@ -254,8 +259,8 @@ class NumpyBackend(BrainBackend):
                 weight_update = learning_rate * activity_corr
                 self.weights += weight_update
                 
-                # Keep weights bounded
-                self.weights = np.clip(self.weights, 0.0, 2.0)
+                # Keep weights bounded (configurable)
+                self.weights = np.clip(self.weights, self.min_weight_bound, self.max_weight_bound)
             except Exception:
                 # If correlation calculation fails, skip learning
                 pass

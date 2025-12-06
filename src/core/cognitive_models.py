@@ -17,6 +17,7 @@ class CognitiveConfig(BaseModel):
     sensory_encoding_rate: float = Field(default=10.0, description="Poisson spike rate for sensory encoding")
     embedding_dimension: int = Field(default=128, description="Dimension of input embeddings")
     spike_threshold: float = Field(default=0.5, description="Threshold for spike generation")
+    background_spike_probability: float = Field(default=0.01, description="Background spike probability for unused neurons")
     
     # Memory system parameters
     max_episodic_memories: int = Field(default=1000, description="Maximum number of episodic memories")
@@ -27,6 +28,23 @@ class CognitiveConfig(BaseModel):
     hebbian_learning_rate: float = Field(default=0.01, description="Learning rate for Hebbian updates")
     association_threshold: float = Field(default=0.3, description="Threshold for forming associations")
     co_activity_window: float = Field(default=0.1, description="Time window for co-activity detection (seconds)")
+    max_association_strength: float = Field(default=1.0, description="Maximum strength for associative connections")
+    
+    # Learning weight combinations (for association strength calculation)
+    association_weight_pattern: float = Field(default=0.4, description="Weight for pattern similarity in association")
+    association_weight_temporal: float = Field(default=0.3, description="Weight for temporal proximity in association")
+    association_weight_context: float = Field(default=0.3, description="Weight for context similarity in association")
+    
+    # Relevance calculation weights
+    relevance_weight_pattern: float = Field(default=0.3, description="Weight for pattern similarity in relevance")
+    relevance_weight_context: float = Field(default=0.5, description="Weight for context similarity in relevance")
+    relevance_weight_memory: float = Field(default=0.2, description="Weight for memory strength in relevance")
+    min_relevance_threshold: float = Field(default=0.05, description="Minimum relevance threshold for memory retrieval")
+    
+    # Backend learning parameters
+    background_noise_level: float = Field(default=0.01, description="Background noise level for backend neurons")
+    min_weight_bound: float = Field(default=0.0, description="Minimum weight bound for synaptic connections")
+    max_weight_bound: float = Field(default=2.0, description="Maximum weight bound for synaptic connections")
     
     # Episodic memory parameters
     consolidation_threshold: float = Field(default=0.7, description="Threshold for memory consolidation")
@@ -36,10 +54,15 @@ class CognitiveConfig(BaseModel):
     # Semantic memory parameters
     semantic_consolidation_threshold: int = Field(default=5, description="Number of exposures needed for semantic consolidation")
     semantic_merge_threshold: float = Field(default=0.8, description="Similarity threshold for merging semantic memories")
+    max_confidence: float = Field(default=1.0, description="Maximum confidence value for semantic memories")
+    activation_pattern_threshold: float = Field(default=0.5, description="Probability threshold for activation pattern generation")
+    min_concept_traces_for_consolidation: int = Field(default=1, description="Minimum number of concept traces needed for consolidation")
     
     # Executive layer parameters
     arbitration_threshold: float = Field(default=0.6, description="Threshold for executive arbitration")
     recall_probability: float = Field(default=0.7, description="Probability of recall vs consolidation")
+    consolidation_priority_weight_access: float = Field(default=0.7, description="Weight for access count in consolidation priority")
+    consolidation_priority_weight_recency: float = Field(default=0.3, description="Weight for recency in consolidation priority")
     
     # Layer connectivity
     layer_connectivity: Dict[str, List[str]] = Field(
