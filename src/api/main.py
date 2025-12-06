@@ -42,6 +42,13 @@ except ImportError:
     AUTOMATED_TRAINING_AVAILABLE = False
     print("⚠️  Automated training routes not available")
 
+try:
+    from api.routes import state, knowledge
+    STATE_ROUTES_AVAILABLE = True
+except ImportError:
+    STATE_ROUTES_AVAILABLE = False
+    print("⚠️  State/knowledge routes not available")
+
 from api.adapters.brain_adapters import CognitiveBrainAdapter, SimpleBrainAdapter
 from api.middleware.rate_limit import RateLimitMiddleware
 from pydantic import BaseModel
@@ -93,11 +100,14 @@ app.add_middleware(RateLimitMiddleware, calls=100, period=60)  # 100 calls per m
 basic_brain: SimpleBrainAdapter | None = None
 advanced_brain: CognitiveBrainAdapter | None = None
 
+# Global cognitive architecture instance (for state/knowledge routes)
+cognitive_architecture = None
+
 
 @app.on_event("startup")
 async def startup_event():
     """Initialize brain networks on startup"""
-    global basic_brain, advanced_brain
+    global basic_brain, advanced_brain, cognitive_architecture
 
     try:
         logger.info("🧠 Initializing Brain Networks...")
@@ -114,6 +124,19 @@ async def startup_event():
         )
         advanced_brain = CognitiveBrainAdapter(cognitive)
         logger.info("✅ CognitiveBrainNetwork initialized (150 neurons)")
+
+        # Initialize CognitiveArchitecture for state/knowledge routes
+        if STATE_ROUTES_AVAILABLE:
+            try:
+                from core.cognitive_architecture import CognitiveArchitecture
+                from core.cognitive_models import CognitiveConfig as CAConfig
+                
+                ca_config = CAConfig(max_episodic_memories=200)
+                cognitive_architecture = CognitiveArchitecture(config=ca_config, backend_name="numpy")
+                logger.info("✅ CognitiveArchitecture initialized for state/knowledge routes")
+            except Exception as e:
+                logger.warning(f"⚠️  Failed to initialize CognitiveArchitecture: {e}")
+                cognitive_architecture = None
 
         logger.info("🚀 Brain API startup complete!")
 
@@ -142,6 +165,14 @@ def get_advanced_brain():
     return advanced_brain
 
 
+def get_cognitive_architecture():
+    """Get cognitive architecture instance for state/knowledge routes"""
+    global cognitive_architecture
+    if cognitive_architecture is None:
+        raise HTTPException(status_code=503, detail="Cognitive architecture not initialized")
+    return cognitive_architecture
+
+
 # Include routers
 app.include_router(health.router, prefix="/health", tags=["Health"])
 
@@ -162,6 +193,13 @@ if AUTOMATED_TRAINING_AVAILABLE:
         tags=["Automated Training"],
     )
 
+# Include state and knowledge routes if available
+if STATE_ROUTES_AVAILABLE:
+    app.dependency_overrides[state.get_cognitive_architecture] = get_cognitive_architecture
+    app.dependency_overrides[knowledge.get_cognitive_architecture] = get_cognitive_architecture
+    app.include_router(state.router, prefix="/state", tags=["State Management"])
+    app.include_router(knowledge.router, prefix="/knowledge", tags=["Knowledge Search"])
+
 
 # Root endpoint
 @app.get("/", response_model=APIResponse)
@@ -181,6 +219,8 @@ async def root():
                 "automated_training": (
                     "/automated-training" if AUTOMATED_TRAINING_AVAILABLE else "not_available"
                 ),
+                "state_management": "/state" if STATE_ROUTES_AVAILABLE else "not_available",
+                "knowledge_search": "/knowledge" if STATE_ROUTES_AVAILABLE else "not_available",
             },
             "timestamp": datetime.now().isoformat(),
         },

@@ -58,11 +58,9 @@ class BrainBackend:
 - Vectorize inner loops; enable optional Numba/JAX acceleration.  
 - Determinism controls: fixed RNG seeds, bounded weights/membranes, reproducible kernels.
 
-**Lessons from prior analyses:**  
-- Earlier experiments contrasted **static brain networks (SBNs)** with **cognitive brain networks (CBNs)**.  
-- The SBN design was simpler but limited in adaptability.  
-- The CBN design, retained here, supports episodic/semantic layering and continual learning.  
-- This choice is documented in ADR-0001 (superseding `DYNAMIC_VS_STATIC_TRAINING_ANALYSIS.md`).
+**Architecture Choice:**  
+- The current design uses **cognitive brain networks (CBNs)** which support episodic/semantic layering and continual learning.  
+- This provides better adaptability and learning capabilities compared to simpler static designs.
 
 ---
 
@@ -109,8 +107,8 @@ class BrainBackend:
 - Data retention policy; right-to-forget hooks to prune episodic/semantic traces.  
 - Explainability endpoints to inspect traces contributing to outputs.
 
-**Lessons from `REAL_WORLD_EXPERIENCE_SOLUTION.md`:**  
-- **Experience replay** is used to reinforce sequences of events (episodic traces).  
+**Continuous Training Design:**  
+- **Experience replay** reinforces sequences of events (episodic traces).  
 - **Novelty filters** (frequency and diversity checks) prevent oversaturation of memory with redundant inputs.  
 - **Human feedback** can be injected at replay stage to guide consolidation.  
 - **Storage efficiency** is achieved by hashing content, compressing redundant associations, and pruning aged traces.  
@@ -157,8 +155,8 @@ class BrainBackend:
 - Controls: temperature/precision, recall depth, safety filters.  
 - Telemetry: per-turn provenance (which traces contributed).  
 
-**Integrated from `NEURAL_RESPONSE_SOLUTION.md`:**  
-- Neural responses are not just text outputs but emerge from **mapping active spike traces → symbolic tokens**.  
+**Neural Response Generation:**  
+- Neural responses emerge from **mapping active spike traces → symbolic tokens**.  
 - The neural response generator:  
   1. Monitors active assemblies in working/episodic memory.  
   2. Matches them to symbolic representations (tokens or phrases).  
@@ -181,10 +179,9 @@ class BrainBackend:
 - **Persistence:** JSON snapshots via BrainSerializer; semantic index in Qdrant/Azure AI Search for hybrid retrieval.  
 - **Right-to-Forget:** cascade deletes from semantic to episodic to working memory; snapshot re-issuance.  
 
-**Lessons from `NETWORK_COMPARISON_ANALYSIS.md`:**  
-- Earlier “Advanced Brain” experiments merged episodic + semantic memory into one layer.  
-- This caused **catastrophic interference**.  
-- Current architecture keeps them distinct — proven more stable in internal experiments.  
+**Memory Architecture:**  
+- Episodic and semantic memory are kept as **distinct layers** to prevent catastrophic interference.  
+- This separation has proven more stable and effective than merged approaches.  
 
 ---
 
@@ -219,11 +216,11 @@ flowchart TD
 
 ---
 
-## Changelog Integration
+## Documentation
 
-- **Quick Start/API usage** (from `COMPLETE_SOLUTION.md`) is now in `docs/getting-started.md`.  
-- **Bugfix notes** (e.g., `ARRAY_COMPARISON_FIX.md`) are archived in `CHANGELOG.md`.  
-- Architecture doc remains **conceptual and structural**, while operational notes live in ADRs and changelogs.
+- Architecture doc remains **conceptual and structural**
+- Implementation details are in the codebase
+- See `docs/INDEX.md` for complete documentation navigation
 
 ---
 

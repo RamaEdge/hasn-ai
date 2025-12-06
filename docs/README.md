@@ -18,16 +18,17 @@ A **completely new approach to artificial intelligence** based on deep neuroscie
 
 ```
 ├── src/
-│   ├── simplified_brain_network.py    # Core brain architecture (2.3x faster than alternatives)
-│   │   # Advanced/optimized versions removed after performance testing
-│   ├── simple_brain_demo.py          # Working demonstration
-│   └── demo_and_analysis.py          # Comprehensive analysis
-├── output/
-│   ├── simple_brain_demo_results.json # Live demo results
-│   ├── brain_network_analysis_report.md # Technical analysis
-│   └── analysis_results.json          # Raw data
-├── BRAIN_INSPIRED_RESEARCH.md         # Research foundation
-├── REVOLUTIONARY_BRAIN_AI_SUMMARY.md  # Complete overview
+│   ├── core/
+│   │   ├── cognitive_architecture.py  # Main cognitive architecture
+│   │   ├── cognitive_brain_network.py # Cognitive brain network
+│   │   ├── simplified_brain_network.py # Simplified brain network
+│   │   └── backend/                   # Backend implementations
+│   ├── api/
+│   │   └── main.py                    # Production FastAPI server
+│   ├── training/                      # Training system
+│   ├── examples/                      # Example scripts
+│   └── tests/                         # Test suite
+├── docs/                              # Documentation
 └── requirements.txt                   # Dependencies
 ```
 
@@ -42,8 +43,8 @@ source .venv/bin/activate
 # Install dependencies
 pip install numpy networkx
 
-# Run the brain-inspired AI demo
-python src/simple_brain_demo.py
+# Run the cognitive architecture demo
+python src/examples/cognitive_demo.py
 ```
 
 ## Key Innovations
@@ -92,9 +93,8 @@ Our live demonstration achieved:
 
 ## Documentation
 
-- **[Complete Overview](analysis/REVOLUTIONARY_BRAIN_AI_SUMMARY.md)** - Full technical and conceptual description
-- **[Research Foundation](research/BRAIN_INSPIRED_RESEARCH.md)** - Neuroscience background and methodology
-- **[Technical Analysis](output/brain_network_analysis_report.md)** - Detailed performance analysis
+- **[Architecture Overview](HASN_Architecture_Integrated.md)** - Complete architecture documentation
+- **[Documentation Index](INDEX.md)** - Navigation guide to all documentation
 
 ## Technical Highlights
 

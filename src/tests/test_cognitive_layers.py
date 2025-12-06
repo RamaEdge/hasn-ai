@@ -284,7 +284,9 @@ class TestSemanticMemoryLayer:
     
     def setup_method(self):
         self.config = CognitiveConfig()
-        self.semantic_memory = SemanticMemoryLayer(self.config)
+        self.backend = Mock()
+        self.backend.num_neurons = 100
+        self.semantic_memory = SemanticMemoryLayer(self.config, self.backend)
     
     def test_consolidate_traces(self):
         """Test consolidating traces into semantic memory"""

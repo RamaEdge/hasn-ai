@@ -42,14 +42,22 @@ class CognitiveArchitecture:
     
     def __init__(self, config: CognitiveConfig = None, backend_name: str = "numpy"):
         self.config = config or CognitiveConfig()
-        self.backend = get_backend(backend_name, num_neurons=1000)
+        
+        # Pass backend config parameters
+        backend_kwargs = {
+            "dt": 1.0,  # Default timestep
+            "background_noise_level": self.config.background_noise_level,
+            "min_weight_bound": self.config.min_weight_bound,
+            "max_weight_bound": self.config.max_weight_bound,
+        }
+        self.backend = get_backend(backend_name, num_neurons=1000, **backend_kwargs)
         
         # Initialize cognitive layers
         self.sensory_layer = SensoryLayer(self.config, self.backend)
         self.associative_layer = AssociativeLayer(self.config, self.backend)
         self.working_memory = WorkingMemoryLayer(self.config)
         self.episodic_memory = EpisodicMemoryLayer(self.config)
-        self.semantic_memory = SemanticMemoryLayer(self.config)
+        self.semantic_memory = SemanticMemoryLayer(self.config, self.backend)
         self.executive_layer = ExecutiveLayer(self.config)
         
         # System state
@@ -173,8 +181,8 @@ class CognitiveArchitecture:
                     if other_concept == concept:
                         concept_traces.append(other_trace_id)
             
-            # If we have enough traces of the same concept, consolidate
-            if len(concept_traces) >= 1:  # Lower threshold - just need 1 other trace
+            # If we have enough traces of the same concept, consolidate (configurable threshold)
+            if len(concept_traces) >= self.config.min_concept_traces_for_consolidation:
                 all_traces = [trace_id] + concept_traces
                 
                 # Consolidate into semantic memory

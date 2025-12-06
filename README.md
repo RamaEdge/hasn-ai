@@ -59,20 +59,20 @@ python src/api/main.py
 # Visit http://localhost:8000/docs for interactive API documentation
 ```
 
-### Run Cognitive Inference Examples
+### Run Cognitive Architecture Demo
 
 ```bash
-# Scenario demos for the cognitive brain network (spiking-based cognition)
-python examples/cognitive_inference_demo.py
+# Cognitive architecture demonstration
+python src/examples/cognitive_demo.py
 ```
 
-The cognitive demos show:
+The cognitive demo shows:
 
 - Episodic memory storage with context
 - Automatic association discovery
-- Inference generation through memory correlation
 - Memory consolidation over time
-- Temporal and analogical reasoning
+- Executive layer arbitration
+- Complete cognitive processing pipeline
 
 ### Automated Training
 
@@ -108,11 +108,19 @@ curl -s -X POST http://localhost:8000/training/interactive \
 
 The `context` ensures episodic memories are created and consolidated.
 
-### Brain Portability Demo
+### Brain State Management
 
 ```bash
-# Demonstrate brain save/load capabilities
-python demonstrate_brain_portability.py
+# Start API server
+python src/api/main.py
+
+# Save brain state via API
+curl -X POST http://localhost:8000/state/save \
+  -H 'Content-Type: application/json' \
+  -d '{"description": "My trained brain state"}'
+
+# Load brain state via API
+curl http://localhost:8000/state/load/{snapshot_id}
 ```
 
 ##  **Key Achievements**

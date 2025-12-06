@@ -52,9 +52,9 @@ class SensoryLayer:
             spike_prob = min(1.0, freq * self.config.sensory_encoding_rate / 100.0)
             spike_pattern[i] = np.random.poisson(spike_prob) > 0
         
-        # Fill remaining neurons with low-probability spikes
+        # Fill remaining neurons with low-probability spikes (configurable)
         for i in range(len(char_freq), self.backend.num_neurons):
-            spike_prob = 0.01  # Low background activity
+            spike_prob = self.config.background_spike_probability
             spike_pattern[i] = np.random.poisson(spike_prob) > 0
         
         self.encoding_cache[text] = spike_pattern
@@ -108,7 +108,11 @@ class AssociativeLayer:
                 if i != j:
                     # Hebbian update
                     self.association_matrix[i, j] += self.config.hebbian_learning_rate
-                    self.association_matrix[i, j] = min(1.0, self.association_matrix[i, j])
+                    # Cap at configurable maximum association strength
+                    self.association_matrix[i, j] = min(
+                        self.config.max_association_strength,
+                        self.association_matrix[i, j]
+                    )
         
         # Decay old associations
         self._decay_associations()
@@ -244,8 +248,11 @@ class EpisodicMemoryLayer:
         if trace_id in self.traces:
             self.traces[trace_id].access_count += 1
     
-    def find_similar_traces(self, pattern: Dict[int, bool], threshold: float = 0.7) -> List[str]:
+    def find_similar_traces(self, pattern: Dict[int, bool], threshold: float = None) -> List[str]:
         """Find traces with similar spike patterns"""
+        if threshold is None:
+            threshold = self.config.consolidation_threshold
+        
         similar_traces = []
         
         for trace_id, trace in self.traces.items():
@@ -294,8 +301,9 @@ class EpisodicMemoryLayer:
 class SemanticMemoryLayer:
     """Semantic memory layer - consolidation process merges traces"""
     
-    def __init__(self, config: CognitiveConfig):
+    def __init__(self, config: CognitiveConfig, backend=None):
         self.config = config
+        self.backend = backend
         self.semantic_memories: Dict[str, SemanticMemory] = {}
         self.consolidation_queue: List[str] = []
         
@@ -316,7 +324,10 @@ class SemanticMemoryLayer:
             consolidated_count=len(trace_ids),
             semantic_vector=consolidated_vector,
             activation_pattern=activation_pattern,
-            confidence=min(1.0, len(trace_ids) / self.config.semantic_consolidation_threshold)
+            confidence=min(
+                self.config.max_confidence,
+                len(trace_ids) / self.config.semantic_consolidation_threshold
+            )
         )
         
         self.semantic_memories[semantic_id] = semantic_memory
@@ -342,8 +353,14 @@ class SemanticMemoryLayer:
         """Calculate consolidated activation pattern"""
         # Simplified - would use actual spike patterns from traces
         pattern = {}
-        for i in range(100):  # Assuming 100 neurons
-            pattern[i] = np.random.random() > 0.5
+        # Use backend neuron count instead of hard-coded 100
+        if self.backend:
+            neuron_count = self.backend.num_neurons
+        else:
+            neuron_count = 100  # Fallback if backend not available
+        
+        for i in range(neuron_count):
+            pattern[i] = np.random.random() > self.config.activation_pattern_threshold
         return pattern
     
     def find_semantic_memory(self, concept: str) -> Optional[SemanticMemory]:
@@ -386,6 +403,9 @@ class ExecutiveLayer:
     
     def get_consolidation_priority(self, trace_id: str, access_count: int, recency: float) -> float:
         """Calculate consolidation priority for a trace"""
-        # Higher priority for frequently accessed, recent traces
-        priority = access_count * 0.7 + recency * 0.3
+        # Higher priority for frequently accessed, recent traces (configurable weights)
+        priority = (
+            access_count * self.config.consolidation_priority_weight_access +
+            recency * self.config.consolidation_priority_weight_recency
+        )
         return priority

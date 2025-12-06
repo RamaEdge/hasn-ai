@@ -7,10 +7,10 @@ Based on our demonstrations, here's a comprehensive guide on training the brain-
 ###  1. Basic Training Setup
 
 ```python
-from simple_brain_demo import SimpleBrainNetwork
+from core.simplified_brain_network import SimpleBrainNetwork
 
-# Create network with module sizes: [sensory, memory, executive, motor]
-network = SimpleBrainNetwork([30, 25, 20, 15])
+# Create network with specified number of neurons
+network = SimpleBrainNetwork(num_neurons=100, connectivity_prob=0.1)
 
 # The network automatically creates:
 # - Spiking neurons with STDP learning

@@ -52,6 +52,17 @@ class CognitiveConfig(NetworkConfig):
     # Memory consolidation
     consolidation_probability: float = 0.1
     memory_replay_probability: float = 0.05
+    
+    # Learning weight combinations (configurable)
+    association_weight_pattern: float = 0.4
+    association_weight_temporal: float = 0.3
+    association_weight_context: float = 0.3
+    
+    # Relevance calculation weights (configurable)
+    relevance_weight_pattern: float = 0.3
+    relevance_weight_context: float = 0.5
+    relevance_weight_memory: float = 0.2
+    min_relevance_threshold: float = 0.05
 
 
 class CognitiveBrainNetwork(SimpleBrainNetwork):
@@ -147,9 +158,26 @@ class CognitiveBrainNetwork(SimpleBrainNetwork):
                 new_memory.context, existing_memory.context
             )
 
-            # Overall association strength
+            # Overall association strength (configurable weights)
+            # Normalize weights to sum to 1.0
+            total_weight = (
+                self.config.association_weight_pattern +
+                self.config.association_weight_temporal +
+                self.config.association_weight_context
+            )
+            if total_weight > 0:
+                weight_pattern = self.config.association_weight_pattern / total_weight
+                weight_temporal = self.config.association_weight_temporal / total_weight
+                weight_context = self.config.association_weight_context / total_weight
+            else:
+                weight_pattern = 0.4
+                weight_temporal = 0.3
+                weight_context = 0.3
+            
             association_strength = (
-                0.4 * pattern_similarity + 0.3 * temporal_proximity + 0.3 * context_similarity
+                weight_pattern * pattern_similarity +
+                weight_temporal * temporal_proximity +
+                weight_context * context_similarity
             )
 
             # Create bidirectional association if strong enough
@@ -278,10 +306,30 @@ class CognitiveBrainNetwork(SimpleBrainNetwork):
             # Consider activation strength and consolidation
             memory_strength = memory.activation_strength * (1 + memory.consolidation_level)
 
-            # Overall relevance - boost context similarity for better matching
-            relevance = 0.3 * pattern_sim + 0.5 * context_sim + 0.2 * memory_strength
+            # Overall relevance (configurable weights)
+            # Normalize weights to sum to 1.0
+            total_weight = (
+                self.config.relevance_weight_pattern +
+                self.config.relevance_weight_context +
+                self.config.relevance_weight_memory
+            )
+            if total_weight > 0:
+                weight_pattern = self.config.relevance_weight_pattern / total_weight
+                weight_context = self.config.relevance_weight_context / total_weight
+                weight_memory = self.config.relevance_weight_memory / total_weight
+            else:
+                weight_pattern = 0.3
+                weight_context = 0.5
+                weight_memory = 0.2
+            
+            relevance = (
+                weight_pattern * pattern_sim +
+                weight_context * context_sim +
+                weight_memory * memory_strength
+            )
 
-            if relevance > 0.05:  # Lower minimum relevance threshold
+            # Use configurable minimum relevance threshold
+            if relevance > self.config.min_relevance_threshold:
                 relevance_scores.append((memory_id, relevance))
                 print(
                     f"     Memory {memory_id}: pattern_sim={pattern_sim:.3f}, context_sim={context_sim:.3f}, relevance={relevance:.3f}"
