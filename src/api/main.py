@@ -41,6 +41,7 @@ knowledge = _import_optional_route("knowledge")
 ingest = _import_optional_route("ingest")
 train_ingest = _import_optional_route("train_ingest")
 chat = _import_optional_route("chat")
+vision = _import_optional_route("vision")
 
 # Optional ingestion imports
 try:
@@ -121,8 +122,8 @@ async def startup_event():
         advanced_brain = CognitiveBrainAdapter(cognitive)
         logger.info("CognitiveBrainNetwork initialized (150 neurons)")
 
-        # Initialize CognitiveArchitecture for state/knowledge/chat routes
-        if state is not None or chat is not None:
+        # Initialize CognitiveArchitecture for state/knowledge/chat/vision routes
+        if state is not None or chat is not None or vision is not None:
             try:
                 from core.cognitive_architecture import CognitiveArchitecture
                 from core.cognitive_models import CognitiveConfig as CAConfig
@@ -230,6 +231,10 @@ if chat is not None:
     app.dependency_overrides[chat.get_cognitive_architecture] = lambda: chat._cognitive_architecture
     app.include_router(chat.router, prefix="/chat", tags=["Chat"])
 
+if vision is not None:
+    app.dependency_overrides[vision.get_cognitive_architecture] = get_cognitive_architecture
+    app.include_router(vision.router, prefix="/vision", tags=["Vision"])
+
 
 # Root endpoint
 @app.get("/", response_model=APIResponse)
@@ -253,6 +258,7 @@ async def root():
                 "knowledge_search": "/knowledge" if knowledge else "not_available",
                 "ingestion": "/ingest" if ingest else "not_available",
                 "training_pipeline": "/train" if train_ingest else "not_available",
+                "vision": "/vision" if vision else "not_available",
             },
             "timestamp": datetime.now().isoformat(),
         },
