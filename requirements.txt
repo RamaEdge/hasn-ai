@@ -48,7 +48,7 @@ pytest-cov==6.2.1
 optuna>=3.5.0  # Bayesian optimization for learning parameters
 
 # Code quality
-black==25.1.0
+black==25.11.0
 flake8==7.3.0
 
 # Security
