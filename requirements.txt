@@ -42,7 +42,7 @@ lxml==6.0.1
 # For development and testing
 pytest>=6.0.0
 pytest-asyncio==1.1.0
-pytest-cov==6.2.1
+pytest-cov==7.0.0
 
 # Hyperparameter optimization
 optuna>=3.5.0  # Bayesian optimization for learning parameters
