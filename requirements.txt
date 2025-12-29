@@ -2,10 +2,10 @@
 # Core dependencies for the HASN architecture
 
 # Production API Dependencies
-fastapi==0.124.0
-uvicorn[standard]==0.38.0
+fastapi==0.128.0
+uvicorn[standard]==0.40.0
 pydantic==2.12.5
-python-multipart==0.0.20
+python-multipart==0.0.21
 
 # Core numerical computing
 numpy>=1.21.0
@@ -20,14 +20,14 @@ matplotlib>=3.5.0
 networkx>=2.6.0
 
 # Database and storage
-sqlalchemy==2.0.44
+sqlalchemy==2.0.45
 alembic==1.17.2
 redis==7.1.0
 qdrant-client>=1.7.0  # Vector database for semantic memory search
 
 # Monitoring and metrics
 prometheus-client==0.23.1
-psutil==7.1.3
+psutil==7.2.1
 
 # HTTP and networking
 aiofiles==25.1.0
@@ -48,7 +48,7 @@ pytest-cov==7.0.0
 optuna>=3.5.0  # Bayesian optimization for learning parameters
 
 # Code quality
-black==25.11.0
+black==25.12.0
 flake8==7.3.0
 
 # Security
