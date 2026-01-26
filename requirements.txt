@@ -5,7 +5,7 @@
 fastapi==0.128.0
 uvicorn[standard]==0.40.0
 pydantic==2.12.5
-python-multipart==0.0.21
+python-multipart==0.0.22
 
 # Core numerical computing
 numpy>=1.21.0
@@ -20,7 +20,7 @@ matplotlib>=3.5.0
 networkx>=2.6.0
 
 # Database and storage
-sqlalchemy==2.0.45
+sqlalchemy==2.0.46
 alembic==1.18.1
 redis==7.1.0
 qdrant-client>=1.7.0  # Vector database for semantic memory search
@@ -56,7 +56,7 @@ python-jose[cryptography]==3.5.0
 passlib[bcrypt]==1.7.4
 
 # Deployment
-gunicorn==23.0.0
+gunicorn==24.1.1
 
 # Optional: Enhanced text processing
 # sentence-transformers==2.2.2
