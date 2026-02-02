@@ -1,5 +1,5 @@
 # Multi-arch Python image for HASN-AI (API/Trainer/Monitor)
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
